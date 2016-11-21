@@ -41,6 +41,7 @@ var {
   loadSessions,
   loadFriendsSchedules,
   loadSurveys,
+  loadProducts
 } = require('./actions');
 var { updateInstallation } = require('./actions/installation');
 var { connect } = require('react-redux');
@@ -58,6 +59,7 @@ var F8App = React.createClass({
     this.props.dispatch(loadSessions());
     this.props.dispatch(loadFriendsSchedules());
     this.props.dispatch(loadSurveys());
+    this.props.dispatch(loadProducts());
 
     updateInstallation({version});
     CodePush.sync({installMode: CodePush.InstallMode.ON_NEXT_RESUME});
@@ -72,6 +74,7 @@ var F8App = React.createClass({
       this.props.dispatch(loadSessions());
       this.props.dispatch(loadNotifications());
       this.props.dispatch(loadSurveys());
+      this.props.dispatch(loadProducts());
       CodePush.sync({installMode: CodePush.InstallMode.ON_NEXT_RESUME});
     }
   },

@@ -57,6 +57,12 @@ module.exports = {
         .ascending('startTime')
     ),
 
+  loadProducts: (): ThunkAction =>
+    loadParseQuery(
+      'LOADED_PRODUCTS',
+      new Parse.Query('Product')
+    ),
+
   loadMaps: (): ThunkAction =>
     loadParseQuery('LOADED_MAPS', new Parse.Query(Maps)),
 

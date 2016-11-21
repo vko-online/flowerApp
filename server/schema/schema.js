@@ -48,6 +48,7 @@ const Session = Parse.Object.extend('Agenda');
 const Speaker = Parse.Object.extend('Speakers');
 const Notification = Parse.Object.extend('Notification');
 const Map = Parse.Object.extend('Maps');
+const Product = Parse.Object.extend('Product');
 
 var {nodeInterface, nodeField} = nodeDefinitions(
   findObjectByGlobalId,
@@ -56,7 +57,7 @@ var {nodeInterface, nodeField} = nodeDefinitions(
 
 function findObjectByGlobalId(globalId) {
   const {type, id} = fromGlobalId(globalId);
-  const Ent = ({Page, FAQ, Session, Speaker})[type];
+  const Ent = ({Page, FAQ, Session, Speaker, Product})[type];
   return new Parse.Query(Ent).get(id);
 }
 
@@ -66,6 +67,8 @@ function objectToGraphQLType(obj) {
       return F8PageType;
     case 'Session':
       return F8SessionType;
+    case 'Product':
+      return F8ProductType;
     case 'Speaker':
       return F8SpeakerType;
   }
@@ -93,6 +96,13 @@ var F8FriendType = new GraphQLObjectType({
       description: 'Friends schedule',
       resolve: (friend, args) => new Parse.Query(Session)
         .containedIn('objectId', Object.keys(friend.schedule))
+        .find(),
+    },
+    product: {
+      type: new GraphQLList(F8ProductType),
+      description: 'Friends product',
+      resolve: (friend, args) => new Parse.Query(Product)
+        .containedIn('objectId', Object.keys(friend.product))
         .find(),
     },
   })
@@ -155,6 +165,51 @@ var F8MapType = new GraphQLObjectType({
       resolve: (map) => map.get('x1') && map.get('x1').url(),
     },
   }),
+});
+
+var F8ProductType = new GraphQLObjectType({
+  name: 'Product',
+  description: 'Represents F8 product item',
+  fields: () => ({
+    id: globalIdField('Product'),
+    title: {
+      type: GraphQLString,
+      resolve: (product) => product.get('title'),
+    },
+    subTitle: {
+      type: GraphQLString,
+      resolve: (product) => product.get('subTitle'),
+    },
+    description: {
+      type: GraphQLString,
+      resolve: (product) => product.get('description'),
+    },
+    type: {
+      type: GraphQLString,
+      resolve: (product) => product.get('type'),
+    },
+    subType: {
+      type: GraphQLString,
+      resolve: (product) => product.get('subType'),
+    },
+    image: {
+      type: GraphQLString,
+      resolve: (product) => product.get('image') && product.get('image').url(),
+    },
+    images: {
+      type: new GraphQLList(GraphQLString),
+      resolve: (product) => product.get('images'),
+    },
+    discount: {
+      type: GraphQLInt,
+      resolve: (product) => product.get('discount'),
+    },
+    price: {
+      type: GraphQLInt,
+      resolve: (product) => product.get('price'),
+    },
+  }),
+  interfaces: [nodeInterface],
 });
 
 var F8SessionType = new GraphQLObjectType({
@@ -323,6 +378,12 @@ var F8QueryType = new GraphQLObjectType({
       description: 'F8 agenda',
       resolve: (user, args) => new Parse.Query(Session)
         .ascending('startTime')
+        .find(),
+    },
+    product: {
+      type: new GraphQLList(F8ProductType),
+      description: 'F8 product',
+      resolve: (user, args) => new Parse.Query(Product)
         .find(),
     },
   }),

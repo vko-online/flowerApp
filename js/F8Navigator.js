@@ -34,6 +34,9 @@ var FilterScreen = require('./filter/FilterScreen');
 var LoginModal = require('./login/LoginModal');
 var Navigator = require('Navigator');
 var SessionsCarousel = require('./tabs/schedule/SessionsCarousel');
+
+var ProductsCarousel = require('./tabs/product/ProductsCarousel');
+
 var SharingSettingsModal = require('./tabs/schedule/SharingSettingsModal');
 var SharingSettingsScreen = require('./tabs/schedule/SharingSettingsScreen');
 var ThirdPartyNotices = require('./tabs/info/ThirdPartyNotices');
@@ -119,10 +122,26 @@ var F8Navigator = React.createClass({
         />
       );
     }
+    if (route.allProducts) {
+      return (
+        <ProductsCarousel
+          {...route}
+          navigator={navigator}
+        />
+      );
+    }
     if (route.session) {
       return (
         <SessionsCarousel
           session={route.session}
+          navigator={navigator}
+        />
+      );
+    }
+    if (route.product) {
+      return (
+        <ProductsCarousel
+          product={route.product}
           navigator={navigator}
         />
       );

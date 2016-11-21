@@ -41,7 +41,10 @@ export type Action =
   | { type: 'LOGGED_OUT' }
   | { type: 'SESSION_ADDED', id: string }
   | { type: 'SESSION_REMOVED', id: string }
+  | { type: 'PRODUCT_ADDED', id: string }
+  | { type: 'PRODUCT_REMOVED', id: string }
   | { type: 'SET_SHARING', enabled: boolean }
+  | { type: 'SET_SHARING_PRODUCT', enabled: boolean }
   | { type: 'APPLY_TOPICS_FILTER', topics: {[key: string]: boolean} }
   | { type: 'CLEAR_FILTER' }
   | { type: 'SWITCH_DAY', day: 1 | 2 }

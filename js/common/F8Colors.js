@@ -36,6 +36,12 @@ const LOCATION_COLORS = {
   'FOOD TENT': '#FFCD3B',
 };
 
+
+function colorForPrice(price: number): string {
+  const hue = Math.round(360 * price / (10));
+  return `hsl(${hue}, 74%, 65%)`;
+}
+
 function colorForLocation(location: ?string): string {
   if (!location) {
     return 'black';
@@ -63,4 +69,5 @@ module.exports = {
   darkBackground: '#183E63',
   colorForLocation,
   colorForTopic,
+  colorForPrice,
 };

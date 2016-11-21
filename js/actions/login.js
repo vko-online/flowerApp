@@ -74,6 +74,7 @@ async function _logInWithFacebook(source: ?string): Promise<Array<Action>> {
       id: profile.id,
       name: profile.name,
       sharedSchedule: user.get('sharedSchedule'),
+      sharedProduct: user.get('sharedProduct'),
     },
   };
 

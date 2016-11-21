@@ -26,7 +26,7 @@
 
 import type { Action } from './types';
 
-type Tab = 'schedule' | 'my-schedule' | 'map' | 'notifications' | 'info';
+type Tab = 'schedule' | 'my-schedule' | 'map' | 'notifications' | 'info' | 'product';
 
 module.exports = {
   switchTab: (tab: Tab): Action => ({
@@ -37,5 +37,9 @@ module.exports = {
   switchDay: (day: 1 | 2): Action => ({
     type: 'SWITCH_DAY',
     day,
+  }),
+  switchType: (productType: 'flower' | 'gift'): Action => ({
+    type: 'SWITCH_TYPE',
+    productType: productType,
   }),
 };

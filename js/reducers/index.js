@@ -38,4 +38,6 @@ module.exports = combineReducers({
   navigation: require('./navigation'),
   friendsSchedules: require('./friendsSchedules'),
   surveys: require('./surveys'),
+  products: require('./products'),
+  basket: require('./basket'),
 });

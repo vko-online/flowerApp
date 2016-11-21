@@ -1,3 +1,8 @@
+schema {
+  query: Query
+  mutation: Mutation
+}
+
 input AddToScheduleInput {
   sessionId: ID!
   clientMutationId: String!
@@ -24,6 +29,7 @@ type Friend {
   name: String
   picture: String
   schedule: [Session]
+  product: [Product]
 }
 
 type Map {
@@ -54,10 +60,24 @@ type Page implements Node {
   logo: String
 }
 
+type Product implements Node {
+  id: ID!
+  title: String
+  subTitle: String
+  description: String
+  type: String
+  subType: String
+  image: String
+  images: [String]
+  price: Int
+  discount: Int
+}
+
 type Query {
   node(id: ID!): Node
   viewer: User
   schedule: [Session]
+  product: [Product]
 }
 
 type Session implements Node {

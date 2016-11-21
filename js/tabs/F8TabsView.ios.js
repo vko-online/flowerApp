@@ -30,6 +30,7 @@ var F8InfoView = require('F8InfoView');
 var F8MapView = require('F8MapView');
 var F8NotificationsView = require('F8NotificationsView');
 var GeneralScheduleView = require('./schedule/GeneralScheduleView');
+var GeneralProductView = require('./product/GeneralProductView');
 var MyScheduleView = require('./schedule/MyScheduleView');
 var React = require('React');
 var TabBarIOS = require('TabBarIOS');
@@ -40,12 +41,13 @@ var unseenNotificationsCount = require('./notifications/unseenNotificationsCount
 var { switchTab } = require('../actions');
 var { connect } = require('react-redux');
 
-import type {Tab, Day} from '../reducers/navigation';
+import type {Tab, Day, ProductType} from '../reducers/navigation';
 
 class F8TabsView extends React.Component {
   props: {
     tab: Tab;
     day: Day;
+    type: ProductType;
     onTabSelect: (tab: Tab) => void;
     navigator: Navigator;
   };
@@ -87,6 +89,16 @@ class F8TabsView extends React.Component {
           />
         </TabBarItemIOS>
         <TabBarItemIOS
+          title="Products"
+          selected={this.props.tab === 'product'}
+          onPress={this.onTabSelect.bind(this, 'product')}
+          icon={require('./product/img/settings.png')}
+          selectedIcon={require('./product/img/settings.png')}>
+          <GeneralProductView
+            navigator={this.props.navigator}
+          />
+        </TabBarItemIOS>
+        <TabBarItemIOS
           title="Maps"
           selected={this.props.tab === 'map'}
           onPress={this.onTabSelect.bind(this, 'map')}
@@ -121,6 +133,7 @@ function select(store) {
   return {
     tab: store.navigation.tab,
     day: store.navigation.day,
+    type: store.navigation.type,
     notificationsBadge: unseenNotificationsCount(store) + store.surveys.length,
   };
 }
