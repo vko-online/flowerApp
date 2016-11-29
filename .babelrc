@@ -7,5 +7,6 @@
       ]
     },
     "react-native"
-  ]
+  ],
+  "sourceMaps": true
 }

@@ -59,6 +59,7 @@ class FilterScreen extends React.Component {
 
   constructor(props) {
     super(props);
+
     this.state = {
       selectedTopics: {...this.props.selectedTopics},
       anim: new Animated.Value(0),

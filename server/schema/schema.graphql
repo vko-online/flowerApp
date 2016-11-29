@@ -3,6 +3,19 @@ schema {
   mutation: Mutation
 }
 
+input AddToBasketInput {
+  userId: ID!
+  productId: ID!
+  amount: Int
+  giftWrap: Boolean
+  clientMutationId: String!
+}
+
+type AddToBasketPayload {
+  productLine: ProductLine
+  clientMutationId: String!
+}
+
 input AddToScheduleInput {
   sessionId: ID!
   clientMutationId: String!
@@ -11,6 +24,12 @@ input AddToScheduleInput {
 type AddToSchedulePayload {
   session: Session
   clientMutationId: String!
+}
+
+type Basket implements Node {
+  id: ID!
+  user: User
+  productLines: [ProductLine]
 }
 
 type Config {
@@ -29,7 +48,7 @@ type Friend {
   name: String
   picture: String
   schedule: [Session]
-  product: [Product]
+  favoriteProducts: [Product]
 }
 
 type Map {
@@ -40,6 +59,7 @@ type Map {
 
 type Mutation {
   addToSchedule(input: AddToScheduleInput!): AddToSchedulePayload
+  addToBasket(input: AddToBasketInput!): AddToBasketPayload
 }
 
 interface Node {
@@ -69,15 +89,23 @@ type Product implements Node {
   subType: String
   image: String
   images: [String]
-  price: Int
   discount: Int
+  price: Int
+}
+
+type ProductLine {
+  id: ID
+  product: Product
+  amount: Int
+  giftWrap: Boolean
 }
 
 type Query {
   node(id: ID!): Node
   viewer: User
   schedule: [Session]
-  product: [Product]
+  products: [Product]
+  baskets: [Basket]
 }
 
 type Session implements Node {
@@ -105,6 +133,7 @@ type User implements Node {
   id: ID!
   name: String
   friends: [Friend]
+  basket: [Basket]
   notifications: [Notification]
   faqs: [FAQ]
   pages: [Page]

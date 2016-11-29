@@ -30,17 +30,10 @@ import {
   GraphQLNonNull,
   GraphQLObjectType,
   GraphQLSchema,
-  GraphQLString,
-} from 'graphql';
-
-import {
-  fromGlobalId,
-  globalIdField,
-  mutationWithClientMutationId,
-  nodeDefinitions,
-} from 'graphql-relay';
-
-import Parse from 'parse/node';
+  GraphQLString
+} from "graphql";
+import { fromGlobalId, globalIdField, mutationWithClientMutationId, nodeDefinitions } from "graphql-relay";
+import Parse from "parse/node";
 
 const Page = Parse.Object.extend('Page');
 const FAQ = Parse.Object.extend('FAQ');
@@ -49,6 +42,8 @@ const Speaker = Parse.Object.extend('Speakers');
 const Notification = Parse.Object.extend('Notification');
 const Map = Parse.Object.extend('Maps');
 const Product = Parse.Object.extend('Product');
+const Basket = Parse.Object.extend('Basket');
+const ProductLine = Parse.Object.extend('ProductLine');
 
 var {nodeInterface, nodeField} = nodeDefinitions(
   findObjectByGlobalId,
@@ -57,7 +52,7 @@ var {nodeInterface, nodeField} = nodeDefinitions(
 
 function findObjectByGlobalId(globalId) {
   const {type, id} = fromGlobalId(globalId);
-  const Ent = ({Page, FAQ, Session, Speaker, Product})[type];
+  const Ent = ({Page, FAQ, Session, Speaker, Product, Basket})[type];
   return new Parse.Query(Ent).get(id);
 }
 
@@ -71,6 +66,8 @@ function objectToGraphQLType(obj) {
       return F8ProductType;
     case 'Speaker':
       return F8SpeakerType;
+    case 'Basket':
+      return F8BasketType;
   }
   return null;
 }
@@ -98,9 +95,9 @@ var F8FriendType = new GraphQLObjectType({
         .containedIn('objectId', Object.keys(friend.schedule))
         .find(),
     },
-    product: {
+    favoriteProducts: {
       type: new GraphQLList(F8ProductType),
-      description: 'Friends product',
+      description: 'Friends favorite product',
       resolve: (friend, args) => new Parse.Query(Product)
         .containedIn('objectId', Object.keys(friend.product))
         .find(),
@@ -108,8 +105,60 @@ var F8FriendType = new GraphQLObjectType({
   })
 });
 
+var F8BasketType = new GraphQLObjectType({
+  name: 'Basket',
+  description: 'User basket',
+  fields: () => ({
+    id: globalIdField('Basket'),
+    user: {
+      type: F8UserType,
+      description: 'The user whom this basket belongs to',
+      resolve: (basket, args) => new Parse.Query(Parse.User)
+        .equalTo('objectId', basket.user)
+        .find(),
+    },
+    productLines: {
+      type: new GraphQLList(F8ProductLineType),
+      description: 'Basket product lines',
+      resolve: (basket, args) => new Parse.Query(ProductLine)
+        .containedIn('objectId', Object.keys(basket.productLines))
+        .find(),
+    },
+  }),
+  interfaces: [nodeInterface],
+});
+
+var F8ProductLineType = new GraphQLObjectType({
+  name: 'ProductLine',
+  description: 'Basket product line',
+  fields: () => ({
+    id: {
+      type: GraphQLID,
+    },
+    product: {
+      type: F8ProductType,
+      description: 'The product itself',
+      resolve: (productLine) => productLine.get('product')
+    },
+    amount: {
+      type: GraphQLInt,
+      description: 'Amount of product',
+      resolve: (productLine) => productLine.get('amount')
+    },
+    giftWrap: {
+      type: GraphQLBoolean,
+      description: 'Gift wrap the product',
+      resolve: (productLine) => productLine.get('giftWrap')
+    },
+  })
+});
+
 function loadFriends(rootValue) {
   return Parse.Cloud.run('friends', {user: rootValue});
+}
+
+function loadBasket(rootValue) {
+  return Parse.Cloud.run('basket', {user: rootValue});
 }
 
 function loadFriendsAttending(rootValue, session) {
@@ -130,6 +179,11 @@ var F8UserType = new GraphQLObjectType({
       type: new GraphQLList(F8FriendType),
       description: 'User friends who are also in the F8 app and enabled sharing',
       resolve: (user, args, {rootValue}) => loadFriends(rootValue),
+    },
+    basket: {
+      type: new GraphQLList(F8BasketType),
+      description: 'User basket',
+      resolve: (user, args, {rootValue}) => loadBasket(rootValue),
     },
     notifications: {
       type: new GraphQLList(F8NotificationType),
@@ -380,10 +434,18 @@ var F8QueryType = new GraphQLObjectType({
         .ascending('startTime')
         .find(),
     },
-    product: {
+    products: {
       type: new GraphQLList(F8ProductType),
-      description: 'F8 product',
+      description: 'F8 products',
       resolve: (user, args) => new Parse.Query(Product)
+        .find(),
+    },
+    baskets: {
+      type: new GraphQLList(F8BasketType),
+      description: 'F8 baskets',
+      resolve: (user, args) => new Parse.Query(Basket)
+        .include('user')
+        .include('productLines')
         .find(),
     },
   }),
@@ -413,11 +475,63 @@ var addToScheduleMutation = mutationWithClientMutationId({
   },
 });
 
+var addToBasketMutation = mutationWithClientMutationId({
+  name: 'AddToBasket',
+  inputFields: {
+    userId: {
+      type: new GraphQLNonNull(GraphQLID),
+    },
+    productId: {
+      type: new GraphQLNonNull(GraphQLID),
+    },
+    amount: {
+      type: GraphQLInt,
+    },
+    giftWrap: {
+      type: GraphQLBoolean,
+    },
+  },
+  outputFields: {
+    productLine: {
+      type: F8ProductLineType,
+      resolve: (payload) => new Parse.Query(ProductLine).get(payload.id),
+    },
+  },
+  mutateAndGetPayload: ({userId, productId, amount, giftWrap}, {rootValue}) => {
+    const {type, id} = fromGlobalId(productId);
+    if (type !== 'Product') {
+      throw new Error(`Invalid type ${type}`);
+    }
+    console.log(`Mutate ${id}`, rootValue);
+
+    return new Promise((resolve) => {
+      const productLine = new Parse.Object(ProductLine);
+      productLine.set('product', productId);
+      productLine.set('amount', amount);
+      productLine.set('giftWrap', giftWrap);
+
+      productLine
+        .save()
+        .then(() => {
+          const basket = new Parse.Query(Basket)
+            .equalTo('user', userId)
+            .limit(1)
+            .find();
+
+          basket.add('productLines', productLine);
+          console.log('Mutate end', productLine, basket);
+          resolve(productLine);
+        });
+    });
+  },
+});
+
 var F8MutationType = new GraphQLObjectType({
   name: 'Mutation',
   fields: () => ({
     // Add your own mutations here
     addToSchedule: addToScheduleMutation,
+    addToBasket: addToBasketMutation
   })
 });
 

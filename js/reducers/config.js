@@ -41,7 +41,7 @@ const initialState: Config = {
   appLinkURL: 'https://www.fbf8.com/',
   appInvitePreviewImageURL: '',
   sessionURLTemplate: 'https://www.fbf8.com/schedule/session/{slug}',
-  productURLTemplate: 'https://www.gifty.kz/shared/products/{id}',
+  productURLTemplate: 'https://www.gifty.kz/shared/products/{id}'
 };
 
 function config(state: Config = initialState, action: Action): Config {
@@ -55,7 +55,7 @@ function config(state: Config = initialState, action: Action): Config {
       sessionURLTemplate: action.config.get('sessionURLTemplate') ||
         state.sessionURLTemplate,
       productURLTemplate: action.config.get('productURLTemplate') ||
-      state.productURLTemplate,
+      state.productURLTemplate
     };
   }
 

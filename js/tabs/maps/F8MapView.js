@@ -44,6 +44,8 @@ class F8MapView extends React.Component {
 
     (this: any).handleGetDirections = this.handleGetDirections.bind(this);
     (this: any).openMaps = this.openMaps.bind(this);
+
+    console.log('OMG', this.props);
   }
 
   render() {
