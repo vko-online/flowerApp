@@ -24,7 +24,7 @@
  */
 
 'use strict';
-
+import Icon from 'react-native-vector-icons/FontAwesome';
 var Animated = require('Animated');
 var F8Colors = require('F8Colors');
 var F8FriendGoing = require('F8FriendGoing');
@@ -136,6 +136,13 @@ var F8SessionDetails = React.createClass({
             onPress={this.props.onShare}
             style={styles.shareButton}>
             <Image source={require('./img/share.png')} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            accessibilityLabel="Add to favorites"
+            accessibilityTraits="button"
+            onPress={this.props.onShare}
+            style={styles.favoriteButton}>
+            <Icon name="star-o" size={30} color="#e1e1e1" />
           </TouchableOpacity>
         </ScrollView>
         <View style={styles.actions}>
@@ -306,6 +313,13 @@ var styles = StyleSheet.create({
     padding: PADDING,
     position: 'absolute',
     right: 0,
+    top: 0,
+  },
+  favoriteButton: {
+    backgroundColor: 'transparent',
+    padding: PADDING,
+    position: 'absolute',
+    right: 40,
     top: 0,
   }
 });

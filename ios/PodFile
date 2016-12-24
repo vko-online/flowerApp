@@ -18,6 +18,7 @@ target 'F8v2' do
     'Share',
   ], :path => '../node_modules/react-native-fbsdk/iOS'
   pod 'CodePush', :path => '../node_modules/react-native-code-push'
+  pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
 end
 
 # Start the React Native JS packager server when running the project in Xcode.

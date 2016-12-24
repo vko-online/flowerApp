@@ -71,7 +71,7 @@ class GeneralProductView extends React.Component {
         title="Gifty"
         selectedSegment={0}
         onSegmentChange={this.switchType}
-        backgroundImage={require('./img/flower-gift.jpg')}
+        backgroundImage={require('./img/schedule-background.png')}
         backgroundColor="#5597B8"
         selectedSectionColor="#51CDDA"
         stickyHeader={null}>

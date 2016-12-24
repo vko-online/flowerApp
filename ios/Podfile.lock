@@ -13,7 +13,7 @@ PODS:
     - React
   - CodePush/SSZipArchive (1.12.2):
     - React
-  - FBSDKCoreKit (4.17.0):
+  - FBSDKCoreKit (4.14.0):
     - Bolts (~> 1.7)
   - FBSDKLoginKit (4.14.0):
     - FBSDKCoreKit
@@ -48,6 +48,8 @@ PODS:
     - React/Core
   - React/RCTWebSocket (0.28.0):
     - React/Core
+  - RNVectorIcons (3.0.0):
+    - React
 
 DEPENDENCIES:
   - CodePush (from `../node_modules/react-native-code-push`)
@@ -63,6 +65,7 @@ DEPENDENCIES:
   - React/RCTText (from `../node_modules/react-native`)
   - React/RCTVibration (from `../node_modules/react-native`)
   - React/RCTWebSocket (from `../node_modules/react-native`)
+  - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
 
 EXTERNAL SOURCES:
   CodePush:
@@ -71,16 +74,19 @@ EXTERNAL SOURCES:
     :path: ../node_modules/react-native
   react-native-fbsdk:
     :path: ../node_modules/react-native-fbsdk/iOS
+  RNVectorIcons:
+    :path: ../node_modules/react-native-vector-icons
 
 SPEC CHECKSUMS:
   Bolts: 8a7995239dbe724f9cba2248b766d48b7ebdd322
   CodePush: 96e1b7358f2305daf4fdf8436c0d23a172599de9
-  FBSDKCoreKit: 30a21d2d7b92984b3d80497113433c00824c35e9
+  FBSDKCoreKit: 6e020b5db0b5bd1e01f5fb0902131befd129a502
   FBSDKLoginKit: da563567a108050ef83739c8c8c001ee9e25fa13
   FBSDKShareKit: e8e5d4ccef69b41132fe33acda26db1e33143e33
   React: 43544faed4af6a0e8fbc4b3abd26141ed654fa49
   react-native-fbsdk: 999c4eec5c84ed4096cc75596a70cf82f8303329
+  RNVectorIcons: 4271384f6233e362f199fce0380a6030cb90c803
 
-PODFILE CHECKSUM: cb0411936cfdb2ef6ccae2a3fc8261c741029580
+PODFILE CHECKSUM: 95bb1a892c04bbd4d1010af7116894aba31e3e8c
 
 COCOAPODS: 1.0.1
