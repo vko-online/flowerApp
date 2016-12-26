@@ -23,31 +23,30 @@
  */
 'use strict';
 
-import type {Product} from '../../reducers/products';
+const React = require('react');
+const {
+  Image,
+  StyleSheet,
+} = require('react-native');
 
-type StringMap = {[key: string]: boolean};
 
-function byType(products: Array<Product>, type: string): Array<Product> {
-  return products.filter((product) => product.type === type);
-}
-
-function byTopics(products: Array<Product>, topics: StringMap): Array<Product> {
-  if (Object.keys(topics).length === 0) {
-    return products;
+class ProfileButton extends React.Component {
+  render() {
+    return (
+      <Image
+        source={{uri: `http://graph.facebook.com/${this.props.user.id}/picture`}}
+        style={styles.profilePic}
+      />
+    );
   }
-  return products.filter((product) => {
-    var hasMatchingTag = false;
-    product.tags.forEach((tag) => {
-      hasMatchingTag = hasMatchingTag || topics[tag];
-    });
-    return hasMatchingTag;
-  });
 }
 
-function byFavorites(products: Array<Product>, favorites: StringMap): Array<Product> {
-  return products.filter(
-    (product) => favorites[product.id]
-  );
-}
+var styles = StyleSheet.create({
+  profilePic: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+  },
+});
 
-module.exports = {byType, byTopics, byFavorites};
+module.exports = ProfileButton;

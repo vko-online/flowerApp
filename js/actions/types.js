@@ -25,6 +25,7 @@
 'use strict';
 
 type ParseObject = Object;
+import type {Product} from '../reducers/products';
 
 export type Action =
     { type: 'LOADED_ABOUT', list: Array<ParseObject> }
@@ -41,14 +42,15 @@ export type Action =
   | { type: 'LOGGED_OUT' }
   | { type: 'SESSION_ADDED', id: string }
   | { type: 'SESSION_REMOVED', id: string }
-  | { type: 'PRODUCT_ADDED', id: string }
-  | { type: 'PRODUCT_REMOVED', id: string }
+  | { type: 'PRODUCT_ADDED', product: Product }
+  | { type: 'PRODUCT_REMOVED', product: Product }
   | { type: 'SET_SHARING', enabled: boolean }
   | { type: 'SET_SHARING_PRODUCT', enabled: boolean }
   | { type: 'APPLY_TOPICS_FILTER', topics: {[key: string]: boolean} }
   | { type: 'CLEAR_FILTER' }
   | { type: 'SWITCH_DAY', day: 1 | 2 }
-  | { type: 'SWITCH_TAB', tab: 'schedule' | 'my-schedule' | 'map' | 'notifications' | 'info' }
+  | { type: 'SWITCH_TYPE', type: 'gift' | 'flower' }
+  | { type: 'SWITCH_TAB', tab: 'products' | 'schedule' | 'my-schedule' | 'my-basket' | 'map' | 'notifications' | 'info' }
   | { type: 'TURNED_ON_PUSH_NOTIFICATIONS' }
   | { type: 'REGISTERED_PUSH_NOTIFICATIONS' }
   | { type: 'SKIPPED_PUSH_NOTIFICATIONS' }

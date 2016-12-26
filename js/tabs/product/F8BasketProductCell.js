@@ -19,42 +19,41 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE
  *
- * @providesModule F8ProductCell
+ * @providesModule F8BasketProductCell
  * @flow
  */
 
 'use strict';
-
+import Icon from 'react-native-vector-icons/FontAwesome';
 var F8Colors = require('F8Colors');
-var Image = require('Image');
 var React = require('React');
 var StyleSheet = require('StyleSheet');
-var { Text } = require('F8Text');
-var F8Touchable = require('F8Touchable');
+var {Text} = require('F8Text');
+var TouchableOpacity = require('TouchableOpacity');
 var View = require('View');
 
-var { connect } = require('react-redux');
+var {connect} = require('react-redux');
+var {
+  removeFromBasketWithPrompt
+} = require('../../actions');
+import { Product } from "../../reducers/products";
 
-import type {Product} from '../../reducers/products';
-
-class F8ProductCell extends React.Component {
-  props: {
+class F8BasketProductCell extends React.Component {
+  props:{
     product: Product;
-    showTick: boolean;
-    showTickForce: boolean;
-    onPress: ?() => void;
     style: any;
   };
 
+  constructor(props) {
+    super(props);
+
+    (this: any).onPress = this.onPress.bind(this);
+  }
+
   render() {
     var product = this.props.product;
-    var tick;
-    if (this.props.showTick && this.props.showTickForce) {
-      tick =
-        <Image style={styles.added} source={require('./img/added-cell.png')} />;
-    }
     var priceColor = F8Colors.colorForPrice(product.price);
-    var cell =
+    return (
       <View style={[styles.cell, this.props.style]}>
         <View style={styles.titleProduct}>
           <Text numberOfLines={2} style={styles.titleText}>
@@ -68,17 +67,15 @@ class F8ProductCell extends React.Component {
           {product.price && ' - '}
           {product.subTitle}
         </Text>
-        {tick}
-      </View>;
+        <TouchableOpacity onPress={this.onPress} accessibilityTraits="button" style={styles.action}>
+          <Icon name="times" size={30} color="#a1a1a1"/>
+        </TouchableOpacity>
+      </View>
+    )
+  }
 
-    if (this.props.onPress) {
-      cell =
-        <F8Touchable onPress={this.props.onPress}>
-          {cell}
-        </F8Touchable>;
-    }
-
-    return cell;
+  onPress() {
+    this.props.dispatch(removeFromBasketWithPrompt(this.props.product));
   }
 }
 
@@ -113,18 +110,12 @@ var styles = StyleSheet.create({
   priceText: {
     fontSize: 12,
   },
-  added: {
+  action: {
     position: 'absolute',
     backgroundColor: 'transparent',
-    right: 0,
-    top: 0,
-  },
+    right: 20,
+    top: 20,
+  }
 });
 
-function select(store, props) {
-  return {
-    showTick: !!store.favorites[props.product.id],
-  };
-}
-
-module.exports = connect(select)(F8ProductCell);
+module.exports = connect()(F8BasketProductCell);

@@ -21,33 +21,22 @@
  *
  * @flow
  */
+
 'use strict';
 
-import type {Product} from '../../reducers/products';
+const Parse = require('parse/react-native');
 
-type StringMap = {[key: string]: boolean};
+import { PromiseAction } from "./types";
 
-function byType(products: Array<Product>, type: string): Array<Product> {
-  return products.filter((product) => product.type === type);
+async function restoreHistory():PromiseAction {
+  const list = await Parse.User.current().relation('myHistory').query().find();
+  return {
+    type: 'RESTORED_HISTORY',
+    list,
+  };
 }
 
-function byTopics(products: Array<Product>, topics: StringMap): Array<Product> {
-  if (Object.keys(topics).length === 0) {
-    return products;
-  }
-  return products.filter((product) => {
-    var hasMatchingTag = false;
-    product.tags.forEach((tag) => {
-      hasMatchingTag = hasMatchingTag || topics[tag];
-    });
-    return hasMatchingTag;
-  });
-}
 
-function byFavorites(products: Array<Product>, favorites: StringMap): Array<Product> {
-  return products.filter(
-    (product) => favorites[product.id]
-  );
-}
-
-module.exports = {byType, byTopics, byFavorites};
+module.exports = {
+  restoreHistory
+};

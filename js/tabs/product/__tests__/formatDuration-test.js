@@ -21,33 +21,18 @@
  *
  * @flow
  */
+
 'use strict';
 
-import type {Product} from '../../reducers/products';
+jest.autoMockOff();
+const formatDuration = require('../formatDuration');
 
-type StringMap = {[key: string]: boolean};
-
-function byType(products: Array<Product>, type: string): Array<Product> {
-  return products.filter((product) => product.type === type);
-}
-
-function byTopics(products: Array<Product>, topics: StringMap): Array<Product> {
-  if (Object.keys(topics).length === 0) {
-    return products;
-  }
-  return products.filter((product) => {
-    var hasMatchingTag = false;
-    product.tags.forEach((tag) => {
-      hasMatchingTag = hasMatchingTag || topics[tag];
-    });
-    return hasMatchingTag;
+describe('formatDuration', () => {
+  it('formats duration', () => {
+    expect(formatDuration(0, 3600000)).toEqual('1 hour');
+    expect(formatDuration(0, 7200000)).toEqual('2 hours');
+    expect(formatDuration(0, 1800000)).toEqual('30 min');
+    expect(formatDuration(0, 3601000)).toEqual('1 hour 1 min');
+    expect(formatDuration(0, 1427371200000)).toEqual('Until 12:00 pm');
   });
-}
-
-function byFavorites(products: Array<Product>, favorites: StringMap): Array<Product> {
-  return products.filter(
-    (product) => favorites[product.id]
-  );
-}
-
-module.exports = {byType, byTopics, byFavorites};
+});

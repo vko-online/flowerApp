@@ -23,95 +23,80 @@
  */
 'use strict';
 
-var F8ProductCell = require('F8ProductCell');
-var FilterProducts = require('./filterProducts');
+var EmptyProduct = require('./EmptyProduct');
 var Navigator = require('Navigator');
 var React = require('React');
 var ProductsSectionHeader = require('./ProductsSectionHeader');
+var InviteFriendsButton = require('./InviteFriendsButton');
 var PureListView = require('../../common/PureListView');
-var groupProducts = require('./groupProducts');
+var FriendCell = require('./FriendCell');
 
-import type {Product} from '../../reducers/products';
-import type {ProductsListData} from './groupProducts';
+type Friend = any;
 
 type Props = {
-  type: string;
-  products: Array<Product>;
+  friends: Array<Friend>;
   navigator: Navigator;
-  renderEmptyList?: (type: string) => ReactElement;
 };
 
-type State = {
-  todayProducts: ProductsListData;
-};
-
-class ProductListView extends React.Component {
+class FriendsListView extends React.Component {
   props: Props;
-  state: State;
   _innerRef: ?PureListView;
 
   constructor(props: Props) {
     super(props);
 
-
-    this.state = {
-      todayProducts: groupProducts(FilterProducts.byType(props.products, props.type)),
-    };
-
     this._innerRef = null;
 
     (this: any).renderSectionHeader = this.renderSectionHeader.bind(this);
     (this: any).renderRow = this.renderRow.bind(this);
+    (this: any).renderFooter = this.renderFooter.bind(this);
     (this: any).renderEmptyList = this.renderEmptyList.bind(this);
     (this: any).storeInnerRef = this.storeInnerRef.bind(this);
-  }
-
-  componentWillReceiveProps(nextProps: Props) {
-    if (nextProps.products !== this.props.products ||
-        nextProps.type !== this.props.type) {
-      this.setState({
-        todayProducts: groupProducts(FilterProducts.byType(nextProps.products, nextProps.type))
-      });
-    }
   }
 
   render() {
     return (
       <PureListView
         ref={this.storeInnerRef}
-        data={this.state.todayProducts}
+        data={this.props.friends}
         renderRow={this.renderRow}
         renderSectionHeader={this.renderSectionHeader}
-        {...(this.props: any /* flow can't guarantee the shape of props */)}
         renderEmptyList={this.renderEmptyList}
+        renderFooter={this.renderFooter}
+        {...(this.props: any /* flow can't guarantee the shape of props */)}
       />
     );
   }
 
-  renderSectionHeader(sectionData: any, sectionID: string) {
-    return <ProductsSectionHeader title={sectionID} />;
+  renderSectionHeader() {
+    return <ProductsSectionHeader title="See a friend's favorites" />;
   }
 
-  renderRow(product: Product, type?: string) {
+  renderRow(friend: Friend) {
     return (
-      <F8ProductCell
-        onPress={() => this.openProduct(product, type)}
-        product={product}
+      <FriendCell
+        friend={friend}
+        onPress={() => this.openFriendsFavorites(friend)}
       />
     );
   }
 
   renderEmptyList(): ?ReactElement {
-    const {renderEmptyList} = this.props;
-    return renderEmptyList && renderEmptyList(this.props.day);
+    return (
+      <EmptyProduct
+        image={require('./img/no-friends-found.png')}
+        text={'Friends using the F8 app\nwill appear here.'}>
+        <InviteFriendsButton />
+      </EmptyProduct>
+    );
   }
 
-  openProduct(product: Product, type: string) {
-    this.props.navigator.push({
-      type,
-      product,
-      allProducts: this.state.todayProducts,
-    });
+  renderFooter() {
+    return <InviteFriendsButton style={{margin: 20}} />;
+  }
+
+  openFriendsFavorites(friend: Friend) {
+    this.props.navigator.push({friend});
   }
 
   storeInnerRef(ref: ?PureListView) {
@@ -127,4 +112,4 @@ class ProductListView extends React.Component {
   }
 }
 
-module.exports = ProductListView;
+module.exports = FriendsListView;

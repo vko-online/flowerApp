@@ -37,7 +37,10 @@ module.exports = combineReducers({
   filter: require('./filter'),
   navigation: require('./navigation'),
   friendsSchedules: require('./friendsSchedules'),
+  friendsFavorites: require('./friendsFavorites'),
   surveys: require('./surveys'),
   products: require('./products'),
   basket: require('./basket'),
+  favorites: require('./favorites'),
+  history: require('./history')
 });

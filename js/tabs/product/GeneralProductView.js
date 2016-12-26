@@ -24,12 +24,15 @@
 'use strict';
 
 var EmptyProduct = require('./EmptyProduct');
+var FilterHeader = require('./FilterHeader');
+var FilterProducts = require('./filterProducts');
 var ListContainer = require('ListContainer');
 var Navigator = require('Navigator');
 var React = require('React');
 var Platform = require('Platform');
 var F8DrawerLayout = require('F8DrawerLayout');
 var ProductListView = require('./ProductListView');
+var FilterScreen = require('../../filter/FilterScreen');
 
 var { connect } = require('react-redux');
 var {switchType} = require('../../actions');
@@ -41,10 +44,12 @@ var { createSelector } = require('reselect');
 
 const data = createSelector(
   (store) => store.products,
-  (products) => products, //filtering
+  (store) => store.filter,
+  (products, filter) => FilterProducts.byTopics(products, filter),
 );
 
 type Props = {
+  filter: any;
   type: string;
   products: Array<Product>;
   navigator: Navigator;
@@ -61,20 +66,31 @@ class GeneralProductView extends React.Component {
 
     (this: any).renderEmptyList = this.renderEmptyList.bind(this);
     (this: any).switchType = this.switchType.bind(this);
+    (this: any).openFilterScreen = this.openFilterScreen.bind(this);
     (this: any).renderNavigationView = this.renderNavigationView.bind(this);
   }
 
   render() {
+    const filterItem = {
+      icon: require('../../common/img/filter.png'),
+      title: 'Filter',
+      onPress: this.openFilterScreen,
+    };
+
+    const filterHeader = Object.keys(this.props.filter).length > 0
+      ? <FilterHeader />
+      : null;
 
     const content = (
       <ListContainer
-        title="Gifty"
-        selectedSegment={0}
+        title="Gifts"
+        selectedSegment={this.props.type}
         onSegmentChange={this.switchType}
         backgroundImage={require('./img/schedule-background.png')}
         backgroundColor="#5597B8"
         selectedSectionColor="#51CDDA"
-        stickyHeader={null}>
+        stickyHeader={filterHeader}
+        rightItem={filterItem}>
         <ProductListView
           title="Цветы"
           type="flower"
@@ -95,30 +111,47 @@ class GeneralProductView extends React.Component {
     if (Platform.OS === 'ios') {
       return content;
     }
+    return (
+      <F8DrawerLayout
+        ref={(drawer) => { this._drawer = drawer; }}
+        drawerWidth={300}
+        drawerPosition="right"
+        renderNavigationView={this.renderNavigationView}>
+        {content}
+      </F8DrawerLayout>
+    );
   }
 
   renderNavigationView() {
-    return null;
+    return <FilterScreen onClose={() => this._drawer && this._drawer.closeDrawer()} />;
   }
 
-  renderEmptyList(type: string) {
+  renderEmptyList(day: number) {
     return (
       <EmptyProduct
-        title={`No products on type ${type} match the filter`}
-        text="Check the product for the other type or remove the filter."
+        title={`No products for type ${day} that match the filter`}
+        text="Check the products for the other types or remove the filter."
       />
     );
   }
 
-  switchType(page) {
-    var type = page === 0 ? 'gift' : 'product';
+  openFilterScreen() {
+    if (Platform.OS === 'ios') {
+      this.props.navigator.push({ filter: 123 });
+    } else {
+      this._drawer && this._drawer.openDrawer();
+    }
+  }
+
+  switchType(type) {
     this.props.switchType(type);
   }
 }
 
 function select(store) {
   return {
-    type: store.navigation.type,
+    day: store.navigation.day,
+    filter: store.filter,
     products: data(store),
   };
 }

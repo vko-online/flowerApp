@@ -32,7 +32,7 @@ const ActionSheetIOS = require('ActionSheetIOS');
 const Alert = require('Alert');
 const Share = require('react-native-share');
 
-import { ThunkAction } from "./types";
+import { ThunkAction} from "./types";
 import { Product } from "../reducers/products";
 
 function setSharingEnabled(enabled:boolean):ThunkAction {
@@ -78,5 +78,5 @@ function logShare(id, completed, activity) {
 
 module.exports = {
   shareProduct,
-  setSharingEnabled,
+  setSharingEnabled
 };

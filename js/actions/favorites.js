@@ -34,53 +34,53 @@ const ProductClass = Parse.Object.extend('Product');
 import { ThunkAction, PromiseAction, Dispatch } from "./types";
 import { Product } from "../reducers/products";
 
-function addToBasket(product:Product):ThunkAction {
-  return (dispatch:Dispatch) => {
+function addToFavorites(id: string): ThunkAction {
+  return (dispatch: Dispatch) => {
     if (Parse.User.current()) {
-      Parse.User.current().relation('myBasket').add(new ProductClass({id: product.id}));
+      Parse.User.current().relation('myFavorites').add(new ProductClass({id}));
       Parse.User.current().save();
     }
     dispatch({
-      type: 'PRODUCT_ADDED',
-      product,
+      type: 'PRODUCT_ADDED_FAVORITES',
+      id,
     });
   };
 }
 
-function removeFromBasket(product:Product):ThunkAction {
-  return (dispatch:Dispatch) => {
+function removeFromFavorites(id: string): ThunkAction {
+  return (dispatch: Dispatch) => {
     if (Parse.User.current()) {
-      Parse.User.current().relation('myBasket').remove(new ProductClass({id: product.id}));
+      Parse.User.current().relation('myFavorites').remove(new ProductClass({id}));
       Parse.User.current().save();
     }
     dispatch({
-      type: 'PRODUCT_REMOVED',
-      product,
+      type: 'PRODUCT_REMOVE_FAVORITES',
+      id,
     });
   };
 }
 
-function removeFromBasketWithPrompt(product:Product):ThunkAction {
+function removeFromFavoritesWithPrompt(product: Product): ThunkAction {
   return (dispatch) => {
     if (Platform.OS === 'ios') {
       ActionSheetIOS.showActionSheetWithOptions({
-        options: ['Remove From Basket', 'Cancel'],
+        options: ['Remove From Favorites', 'Cancel'],
         destructiveButtonIndex: 0,
         cancelButtonIndex: 1,
       }, (buttonIndex) => {
         if (buttonIndex === 0) {
-          dispatch(removeFromBasket(product));
+          dispatch(removeFromFavorites(product.id));
         }
       });
     } else {
       Alert.alert(
-        'Remove From Your Basket',
-        `Would you like to remove "${product.title}" from your basket?`,
+        'Remove From Your Favorites',
+        `Would you like to remove "${product.title}" from your favorites?`,
         [
           {text: 'Cancel'},
           {
             text: 'Remove',
-            onPress: () => dispatch(removeFromBasket(product))
+            onPress: () => dispatch(removeFromFavorites(product.id))
           }
         ]
       );
@@ -88,18 +88,28 @@ function removeFromBasketWithPrompt(product:Product):ThunkAction {
   };
 }
 
-async function restoreBasket():PromiseAction {
-  const list = await Parse.User.current().relation('myBasket').query().find();
+async function loadFriendsFavorites(): PromiseAction {
+  const list = await Parse.Cloud.run('friends');
+  await InteractionManager.runAfterInteractions();
   return {
-    type: 'RESTORED_BASKET',
+    type: 'LOADED_FRIENDS_FAVORITES',
+    list,
+  };
+}
+
+async function restoreFavorites():PromiseAction {
+  const list = await Parse.User.current().relation('myFavorites').query().find();
+  return {
+    type: 'RESTORED_FAVORITES',
     list,
   };
 }
 
 
 module.exports = {
-  addToBasket,
-  removeFromBasket,
-  restoreBasket,
-  removeFromBasketWithPrompt,
+  addToFavorites,
+  removeFromFavorites,
+  removeFromFavoritesWithPrompt,
+  loadFriendsFavorites,
+  restoreFavorites
 };

@@ -29,13 +29,26 @@ const FacebookSDK = require('FacebookSDK');
 const ActionSheetIOS = require('ActionSheetIOS');
 const {Platform} = require('react-native');
 const Alert = require('Alert');
-const {restoreSchedule, loadFriendsSchedules} = require('./schedule');
+const {
+  restoreSchedule,
+  loadFriendsSchedules,
+} = require('./schedule');
+const {
+  restoreFavorites,
+  loadFriendsFavorites
+} = require('./favorites');
+const {
+  restoreHistory
+} = require('./history');
+const {
+  restoreBasket
+} = require('./basket');
 const {updateInstallation} = require('./installation');
 const {loadSurveys} = require('./surveys');
 
-import type { Action, ThunkAction } from './types';
+import { Action, ThunkAction } from "./types";
 
-async function ParseFacebookLogin(scope): Promise {
+async function ParseFacebookLogin(scope):Promise {
   return new Promise((resolve, reject) => {
     Parse.FacebookUtils.logIn(scope, {
       success: resolve,
@@ -44,7 +57,7 @@ async function ParseFacebookLogin(scope): Promise {
   });
 }
 
-async function queryFacebookAPI(path, ...args): Promise {
+async function queryFacebookAPI(path, ...args):Promise {
   return new Promise((resolve, reject) => {
     FacebookSDK.api(path, ...args, (response) => {
       if (response && !response.error) {
@@ -56,7 +69,7 @@ async function queryFacebookAPI(path, ...args): Promise {
   });
 }
 
-async function _logInWithFacebook(source: ?string): Promise<Array<Action>> {
+async function _logInWithFacebook(source:?string):Promise<Array<Action>> {
   await ParseFacebookLogin('public_profile,email,user_friends');
   const profile = await queryFacebookAPI('/me', {fields: 'name,email'});
 
@@ -81,10 +94,13 @@ async function _logInWithFacebook(source: ?string): Promise<Array<Action>> {
   return Promise.all([
     Promise.resolve(action),
     restoreSchedule(),
+    restoreFavorites(),
+    restoreHistory(),
+    restoreBasket()
   ]);
 }
 
-function logInWithFacebook(source: ?string): ThunkAction {
+function logInWithFacebook(source:?string):ThunkAction {
   return (dispatch) => {
     const login = _logInWithFacebook(source);
 
@@ -93,6 +109,7 @@ function logInWithFacebook(source: ?string): ThunkAction {
       (result) => {
         dispatch(result);
         dispatch(loadFriendsSchedules());
+        dispatch(loadFriendsFavorites());
         dispatch(loadSurveys());
       }
     );
@@ -100,13 +117,13 @@ function logInWithFacebook(source: ?string): ThunkAction {
   };
 }
 
-function skipLogin(): Action {
+function skipLogin():Action {
   return {
     type: 'SKIPPED_LOGIN',
   };
 }
 
-function logOut(): ThunkAction {
+function logOut():ThunkAction {
   return (dispatch) => {
     Parse.User.logOut();
     FacebookSDK.logout();
@@ -119,7 +136,7 @@ function logOut(): ThunkAction {
   };
 }
 
-function logOutWithPrompt(): ThunkAction {
+function logOutWithPrompt():ThunkAction {
   return (dispatch, getState) => {
     let name = getState().user.name || 'there';
 
@@ -142,8 +159,8 @@ function logOutWithPrompt(): ThunkAction {
         `Hi, ${name}`,
         'Log out from F8?',
         [
-          { text: 'Cancel' },
-          { text: 'Log out', onPress: () => dispatch(logOut()) },
+          {text: 'Cancel'},
+          {text: 'Log out', onPress: () => dispatch(logOut())},
         ]
       );
     }

@@ -23,31 +23,51 @@
  */
 'use strict';
 
-import type {Product} from '../../reducers/products';
+var React = require('React');
+var F8Button = require('F8Button');
+var {AppInviteDialog, AppEventsLogger} = require('react-native-fbsdk');
+var { connect } = require('react-redux');
 
-type StringMap = {[key: string]: boolean};
+class InviteFriendsButton extends React.Component {
+  props: {
+    appLinkURL: string;
+    appInvitePreviewImageURL: string;
+    style: any;
+  };
 
-function byType(products: Array<Product>, type: string): Array<Product> {
-  return products.filter((product) => product.type === type);
-}
+  render() {
+    const {appLinkURL, style} = this.props;
+    if (!appLinkURL) {
+      return null;
+    }
 
-function byTopics(products: Array<Product>, topics: StringMap): Array<Product> {
-  if (Object.keys(topics).length === 0) {
-    return products;
+    return (
+      <F8Button
+        style={style}
+        caption="Invite friends to the F8 app"
+        onPress={() => this.inviteFriends()}
+      />
+    );
   }
-  return products.filter((product) => {
-    var hasMatchingTag = false;
-    product.tags.forEach((tag) => {
-      hasMatchingTag = hasMatchingTag || topics[tag];
+
+  inviteFriends() {
+    AppEventsLogger.logEvent('Invite Friends', 1);
+    AppInviteDialog.show({
+      applinkUrl: this.props.appLinkURL,
+      previewImageUrl: this.props.appInvitePreviewImageURL,
+    }).catch((error) => {
+      if (error.message) {
+        alert(error.message);
+      }
     });
-    return hasMatchingTag;
-  });
+  }
 }
 
-function byFavorites(products: Array<Product>, favorites: StringMap): Array<Product> {
-  return products.filter(
-    (product) => favorites[product.id]
-  );
+function select(store) {
+  return {
+    appLinkURL: store.config.appLinkURL,
+    appInvitePreviewImageURL: store.config.appInvitePreviewImageURL,
+  };
 }
 
-module.exports = {byType, byTopics, byFavorites};
+module.exports = connect(select)(InviteFriendsButton);

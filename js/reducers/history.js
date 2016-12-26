@@ -21,33 +21,21 @@
  *
  * @flow
  */
+
 'use strict';
 
-import type {Product} from '../../reducers/products';
+import type {Action} from '../actions/types';
+import type {Product} from './products';
 
-type StringMap = {[key: string]: boolean};
+function history(state: Array<Product> = [], action: Action): Array<Product> {
+  switch (action.type) {
+    case 'RESTORED_HISTORY':
+      return [...action.list];
 
-function byType(products: Array<Product>, type: string): Array<Product> {
-  return products.filter((product) => product.type === type);
-}
-
-function byTopics(products: Array<Product>, topics: StringMap): Array<Product> {
-  if (Object.keys(topics).length === 0) {
-    return products;
+    case 'LOGGED_OUT':
+      return [];
   }
-  return products.filter((product) => {
-    var hasMatchingTag = false;
-    product.tags.forEach((tag) => {
-      hasMatchingTag = hasMatchingTag || topics[tag];
-    });
-    return hasMatchingTag;
-  });
+  return state;
 }
 
-function byFavorites(products: Array<Product>, favorites: StringMap): Array<Product> {
-  return products.filter(
-    (product) => favorites[product.id]
-  );
-}
-
-module.exports = {byType, byTopics, byFavorites};
+module.exports = history;

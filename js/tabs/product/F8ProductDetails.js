@@ -24,24 +24,34 @@
  */
 
 'use strict';
-
+import Icon from 'react-native-vector-icons/FontAwesome';
 var Animated = require('Animated');
 var F8Colors = require('F8Colors');
+var F8FriendGoing = require('F8FriendGoingProduct');
+var F8SpeakerProfile = require('F8SpeakerProfile');
 var Image = require('Image');
-var Dimensions = require('Dimensions');
+import LinearGradient from 'react-native-linear-gradient';
+var MapView = require('../../common/MapView');
 var PixelRatio = require('PixelRatio');
 var React = require('React');
+var Dimensions = require('Dimensions');
 var ScrollView = require('ScrollView');
 var StyleSheet = require('StyleSheet');
 var Subscribable = require('Subscribable');
-var {Text} = require('F8Text');
+var { Text } = require('F8Text');
 var TouchableOpacity = require('TouchableOpacity');
 var View = require('View');
 var AddToBasketButton = require('./AddToBasketButton');
 var {WIDTH} = Dimensions.get('window');
 
+
 var {connect} = require('react-redux');
-var {addToBasket, removeFromBasketWithPrompt} = require('../../actions');
+var {
+  addToBasket,
+  removeFromBasketWithPrompt,
+  addToFavorites,
+  removeFromFavorites
+} = require('../../actions');
 
 var F8ProductDetails = React.createClass({
   mixins: [Subscribable.Mixin],
@@ -53,15 +63,24 @@ var F8ProductDetails = React.createClass({
   },
 
   render: function() {
+    var topics = null;
+    var {tags} = this.props.product;
+    if (tags && tags.length > 0) {
+      topics = (
+        <Text style={styles.topics}>
+          TOPICS: {tags.join(', ')}
+        </Text>
+      );
+    }
 
-    var priceColor = F8Colors.colorForPrice(this.props.product.price);
-    var productPrice = this.props.product.price;
-    var discount = this.props.product.discount;
-    var discountItem = discount ? <Text style={styles.discount}>{'скидка ' + discount + '%'}</Text> : null;
-    var price = (
-      <Text style={[styles.price, {color: priceColor}]}>
-        {productPrice + ' тенге' }
-      </Text>
+    var friendsGoing = this.props.friendsGoing.map(
+      (friend) => (
+        <F8FriendGoing
+          key={friend.id}
+          friend={friend}
+          onPress={() => this.props.navigator.push({friend})}
+        />
+      )
     );
 
     var title = this.props.product.title || '';
@@ -74,8 +93,6 @@ var F8ProductDetails = React.createClass({
           scrollEventThrottle={100}
           showsVerticalScrollIndicator={false}
           automaticallyAdjustContentInsets={false}>
-          {price}
-          {discountItem}
           <Text style={styles.title}>
             {title}
           </Text>
@@ -83,17 +100,41 @@ var F8ProductDetails = React.createClass({
             {this.props.product.description}
           </Text>
           <Image style={styles.picture} source={{uri: this.props.product.image}}/>
+          <Section>
+            {topics}
+          </Section>
+          <Section title="Friends Going">
+            {friendsGoing}
+          </Section>
           <TouchableOpacity
             accessibilityLabel="Share this product"
             accessibilityTraits="button"
-              onPress={this.props.onShare}
+            onPress={this.props.onShare}
             style={styles.shareButton}>
             <Image source={require('./img/share.png')} />
           </TouchableOpacity>
+          {
+            this.props.isAddedToFavorites ?
+              <TouchableOpacity
+                accessibilityLabel="Remove from favorites"
+                accessibilityTraits="button"
+                onPress={this.props.toggleAddedFavorites}
+                style={styles.favoriteButton}>
+                <Icon name="star" size={30} color="#00f"/>
+              </TouchableOpacity>
+              :
+              <TouchableOpacity
+                accessibilityLabel="Add to favorites"
+                accessibilityTraits="button"
+                onPress={this.props.toggleAddedFavorites}
+                style={styles.favoriteButton}>
+                <Icon name="star-o" size={30} color="#e1e1e1"/>
+              </TouchableOpacity>
+          }
         </ScrollView>
         <View style={styles.actions}>
           <AddToBasketButton
-            isAdded={false}
+            isAdded={this.props.isAddedToBasket}
             onPress={this.toggleAdded}
           />
         </View>
@@ -110,10 +151,30 @@ var F8ProductDetails = React.createClass({
           <Text numberOfLines={1} style={styles.miniTitle}>
             {title}
           </Text>
-          {price}
         </Animated.View>
       </View>
     );
+  },
+
+  toggleAddedFavorites: function() {
+    if (this.props.isAddedToFavorites) {
+      this.props.onRemoveFavorites();
+    } else {
+      this.addToFavorites();
+    }
+  },
+  addToFavorites: function() {
+    if (!this.props.isLoggedIn) {
+      this.props.navigator.push({
+        login: true, // TODO: Proper route
+        callback: this.addToFavorites,
+      });
+    } else {
+      this.props.onAddFavorites();
+      if (this.props.sharedProduct === null) {
+        setTimeout(() => this.props.navigator.push({share: true}), 1000);
+      }
+    }
   },
 
   toggleAdded: function() {
@@ -132,12 +193,44 @@ var F8ProductDetails = React.createClass({
       });
     } else {
       this.props.addToBasket();
-      if (this.props.sharedSchedule === null) {
-        setTimeout(() => this.props.navigator.push({share: true}), 1000);
-      }
     }
   },
 });
+
+class Section extends React.Component {
+  props: {
+    title?: string;
+    children?: any;
+  };
+
+  render() {
+    var {children} = this.props;
+    if (React.Children.count(children) === 0) {
+      return null;
+    }
+    var header;
+    if (this.props.title) {
+      header = (
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>
+            {this.props.title.toUpperCase()}
+          </Text>
+          <LinearGradient
+            start={[0, 0]} end={[1, 0]}
+            colors={['#E1E1E1', 'white']}
+            style={styles.line}
+          />
+        </View>
+      );
+    }
+    return (
+      <View style={styles.section}>
+        {header}
+        {children}
+      </View>
+    );
+  }
+}
 
 var PADDING = 15;
 
@@ -167,12 +260,8 @@ var styles = StyleSheet.create({
     flex: 1,
     color: F8Colors.darkText,
   },
-  price: {
+  location: {
     fontSize: 12,
-  },
-  discount: {
-    fontSize: 15,
-    color: F8Colors.darkText
   },
   title: {
     fontSize: 24,
@@ -181,7 +270,7 @@ var styles = StyleSheet.create({
     lineHeight: 32,
     marginVertical: 20,
   },
-  priceDescription: {
+  time: {
     color: F8Colors.lightText,
     marginBottom: 20,
   },
@@ -229,6 +318,13 @@ var styles = StyleSheet.create({
     right: 0,
     top: 0,
   },
+  favoriteButton: {
+    backgroundColor: 'transparent',
+    padding: PADDING,
+    position: 'absolute',
+    right: 40,
+    top: 0,
+  },
   picture: {
     width: WIDTH,
     height: 200
@@ -236,11 +332,17 @@ var styles = StyleSheet.create({
 });
 
 function select(store, props) {
+  const productID = props.product.id;
+  const friendsGoing = store.friendsFavorites.filter((friend) => friend.favorites[productID]);
+
   return {
     isAddedToBasket: !!store.basket[props.product.id],
+    isAddedToFavorites: !!store.favorites[props.product.id],
     isLoggedIn: store.user.isLoggedIn,
     sharedProduct: store.user.sharedProduct,
     productURLTemplate: store.config.productURLTemplate,
+    topics: store.topics,
+    friendsGoing,
   };
 }
 
@@ -248,8 +350,9 @@ function actions(dispatch, props) {
   let id = props.product.id;
   return {
     addToBasket: () => dispatch(addToBasket(id)),
-    removeFromBasketWithPrompt:
-      () => dispatch(removeFromBasketWithPrompt(props.product)),
+    removeFromBasketWithPrompt: () => dispatch(removeFromBasketWithPrompt(props.product)),
+    onAddFavorites: () => dispatch(addToFavorites(id)),
+    onRemoveFavorites: () => dispatch(removeFromFavorites(id))
   };
 }
 

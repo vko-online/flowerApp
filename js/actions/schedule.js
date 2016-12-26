@@ -47,6 +47,7 @@ function addToSchedule(id: string): ThunkAction {
         return installation.save();
       });
     }
+    console.log('addToSchedule SESSION_ADDED');
     dispatch({
       type: 'SESSION_ADDED',
       id,

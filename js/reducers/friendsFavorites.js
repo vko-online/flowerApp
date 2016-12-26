@@ -21,33 +21,27 @@
  *
  * @flow
  */
+
 'use strict';
 
-import type {Product} from '../../reducers/products';
+import type {Action} from '../actions/types';
 
-type StringMap = {[key: string]: boolean};
+export type FriendsFavorites = {
+  id: string;
+  name: string;
+  favorites: {[key: string]: boolean};
+};
 
-function byType(products: Array<Product>, type: string): Array<Product> {
-  return products.filter((product) => product.type === type);
-}
+type State = Array<FriendsFavorites>;
 
-function byTopics(products: Array<Product>, topics: StringMap): Array<Product> {
-  if (Object.keys(topics).length === 0) {
-    return products;
+function friendsFavorites(state: State = [], action: Action): State {
+  if (action.type === 'LOADED_FRIENDS_FAVORITES') {
+    return action.list;
   }
-  return products.filter((product) => {
-    var hasMatchingTag = false;
-    product.tags.forEach((tag) => {
-      hasMatchingTag = hasMatchingTag || topics[tag];
-    });
-    return hasMatchingTag;
-  });
+  if (action.type === 'LOGGED_OUT') {
+    return [];
+  }
+  return state;
 }
 
-function byFavorites(products: Array<Product>, favorites: StringMap): Array<Product> {
-  return products.filter(
-    (product) => favorites[product.id]
-  );
-}
-
-module.exports = {byType, byTopics, byFavorites};
+module.exports = friendsFavorites;

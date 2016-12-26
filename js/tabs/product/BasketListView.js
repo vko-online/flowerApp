@@ -23,29 +23,24 @@
  */
 'use strict';
 
-var F8ProductCell = require('F8ProductCell');
-var FilterProducts = require('./filterProducts');
+var F8BasketProductCell = require('F8BasketProductCell');
 var Navigator = require('Navigator');
 var React = require('React');
-var ProductsSectionHeader = require('./ProductsSectionHeader');
 var PureListView = require('../../common/PureListView');
-var groupProducts = require('./groupProducts');
 
 import type {Product} from '../../reducers/products';
-import type {ProductsListData} from './groupProducts';
 
 type Props = {
-  type: string;
   products: Array<Product>;
   navigator: Navigator;
   renderEmptyList?: (type: string) => ReactElement;
 };
 
 type State = {
-  todayProducts: ProductsListData;
+  todayProducts: Array<Product>;
 };
 
-class ProductListView extends React.Component {
+class BasketListView extends React.Component {
   props: Props;
   state: State;
   _innerRef: ?PureListView;
@@ -55,7 +50,7 @@ class ProductListView extends React.Component {
 
 
     this.state = {
-      todayProducts: groupProducts(FilterProducts.byType(props.products, props.type)),
+      todayProducts: props.products,
     };
 
     this._innerRef = null;
@@ -67,10 +62,9 @@ class ProductListView extends React.Component {
   }
 
   componentWillReceiveProps(nextProps: Props) {
-    if (nextProps.products !== this.props.products ||
-        nextProps.type !== this.props.type) {
+    if (nextProps.products !== this.props.products) {
       this.setState({
-        todayProducts: groupProducts(FilterProducts.byType(nextProps.products, nextProps.type))
+        todayProducts: nextProps.products
       });
     }
   }
@@ -88,14 +82,13 @@ class ProductListView extends React.Component {
     );
   }
 
-  renderSectionHeader(sectionData: any, sectionID: string) {
-    return <ProductsSectionHeader title={sectionID} />;
+  renderSectionHeader() {
+    return null;
   }
 
-  renderRow(product: Product, type?: string) {
+  renderRow(product: Product) {
     return (
-      <F8ProductCell
-        onPress={() => this.openProduct(product, type)}
+      <F8BasketProductCell
         product={product}
       />
     );
@@ -104,14 +97,6 @@ class ProductListView extends React.Component {
   renderEmptyList(): ?ReactElement {
     const {renderEmptyList} = this.props;
     return renderEmptyList && renderEmptyList(this.props.day);
-  }
-
-  openProduct(product: Product, type: string) {
-    this.props.navigator.push({
-      type,
-      product,
-      allProducts: this.state.todayProducts,
-    });
   }
 
   storeInnerRef(ref: ?PureListView) {
@@ -127,4 +112,4 @@ class ProductListView extends React.Component {
   }
 }
 
-module.exports = ProductListView;
+module.exports = BasketListView;

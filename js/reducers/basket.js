@@ -25,32 +25,22 @@
 'use strict';
 
 import type {Action} from '../actions/types';
+import type {Product} from './products';
 
-export type State = {
-  [id: string]: boolean;
-};
-
-function basket(state: State = {}, action: Action): State {
+function basket(state: Array<Product> = [], action: Action): Array<Product> {
+  console.log('basket state', state);
   switch (action.type) {
     case 'PRODUCT_ADDED':
-      let added = {};
-      added[action.id] = true;
-      return {...state, ...added};
+      return [...state, ...action.product];
 
     case 'PRODUCT_REMOVED':
-      let rest = {...state};
-      delete rest[action.id];
-      return rest;
+      return [...state.filter(product => product.id !== action.product)];
 
     case 'LOGGED_OUT':
-      return {};
+      return [];
 
     case 'RESTORED_BASKET':
-      let all = {};
-      action.list.forEach((product) => {
-        all[product.id] = true;
-      });
-      return all;
+      return [].concat(action.list);
   }
   return state;
 }

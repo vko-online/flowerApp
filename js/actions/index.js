@@ -36,6 +36,8 @@ const testActions = require('./test');
 const installationActions = require('./installation');
 const basketActions = require('./basket');
 const productActions = require('./product');
+const favoriteActions = require('./favorites');
+const historyActions = require('./history');
 
 module.exports = {
   ...loginActions,
@@ -50,4 +52,6 @@ module.exports = {
   ...installationActions,
   ...basketActions,
   ...productActions,
+  ...favoriteActions,
+  ...historyActions
 };

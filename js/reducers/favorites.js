@@ -21,33 +21,39 @@
  *
  * @flow
  */
+
 'use strict';
 
-import type {Product} from '../../reducers/products';
+import type {Action} from '../actions/types';
 
-type StringMap = {[key: string]: boolean};
+export type State = {
+  [id: string]: boolean;
+};
 
-function byType(products: Array<Product>, type: string): Array<Product> {
-  return products.filter((product) => product.type === type);
-}
+function favorites(state: State = {}, action: Action): State {
+  switch (action.type) {
+    case 'PRODUCT_ADDED_FAVORITES':
+      console.log('PRODUCT_ADDED_FAVORITES', action.id);
+      let added = {};
+      added[action.id] = true;
+      return {...state, ...added};
 
-function byTopics(products: Array<Product>, topics: StringMap): Array<Product> {
-  if (Object.keys(topics).length === 0) {
-    return products;
+    case 'PRODUCT_REMOVE_FAVORITES':
+      let rest = {...state};
+      delete rest[action.id];
+      return rest;
+
+    case 'LOGGED_OUT':
+      return {};
+
+    case 'RESTORED_FAVORITES':
+      let all = {};
+      action.list.forEach((product) => {
+        all[product.id] = true;
+      });
+      return all;
   }
-  return products.filter((product) => {
-    var hasMatchingTag = false;
-    product.tags.forEach((tag) => {
-      hasMatchingTag = hasMatchingTag || topics[tag];
-    });
-    return hasMatchingTag;
-  });
+  return state;
 }
 
-function byFavorites(products: Array<Product>, favorites: StringMap): Array<Product> {
-  return products.filter(
-    (product) => favorites[product.id]
-  );
-}
-
-module.exports = {byType, byTopics, byFavorites};
+module.exports = favorites;

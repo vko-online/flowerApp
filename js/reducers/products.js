@@ -37,6 +37,7 @@ export type Product = {
   discount: number;
   image: string;
   images: Array<string>;
+  tags: Array<string>
 };
 
 function fromParseProducts(product: Object): Product {
@@ -51,6 +52,7 @@ function fromParseProducts(product: Object): Product {
     discount: product.get('discount'),
     image: product.get('image') && product.get('image').url(),
     images: product.get('images'),
+    tags: product.get('tags'),
   };
 }
 

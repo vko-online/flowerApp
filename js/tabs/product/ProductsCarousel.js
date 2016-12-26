@@ -34,10 +34,10 @@ const Platform = require('Platform');
 const Carousel = require('../../common/Carousel');
 
 const {connect} = require('react-redux');
+const {loadFriendsFavorites, shareProduct} = require('../../actions');
 
 import { Dispatch } from "../../actions/types";
 import { Product } from "../../reducers/products";
-const {shareProduct} = require('../../actions');
 
 const {
   Text,
@@ -91,7 +91,7 @@ class ProductsCarousel extends React.Component {
       }
     }
 
-    const selectedIndex = flatProductsList.findIndex((s) => s.id === this.props.product.id);
+    const selectedIndex = flatProductsList.findIndex(s => s.id === this.props.product.id);
     if (selectedIndex === -1) {
       console.log(this.props.product);
       console.log(flatProductsList);
@@ -112,16 +112,14 @@ class ProductsCarousel extends React.Component {
 
   render() {
     var {rowIndex, sectionLength, sectionTitle} = this.state.contexts[this.state.selectedIndex];
-
-    var productType = this.state.type === 'flower' ? 'цветы' : 'подарки';
-
-    var rightItem = {
-      layout: 'icon',
-      title: 'Close',
-      icon: require('../../common/BackButtonIcon'),
-      onPress: this.dismiss,
-    };
-
+    var rightItem;
+    if (Platform.OS === 'android') {
+      rightItem = {
+        title: 'Share',
+        icon: require('./img/share.png'),
+        onPress: this.shareCurrentProduct,
+      };
+    }
     return (
       <View style={styles.container}>
         <F8Header
@@ -131,10 +129,11 @@ class ProductsCarousel extends React.Component {
             title: 'Close',
             icon: require('../../common/BackButtonIcon'),
             onPress: this.dismiss,
-          }}>
+          }}
+          rightItem={rightItem}>
           <View style={styles.headerContent}>
             <Text style={styles.title}>
-              <Text style={styles.productType}>{productType}</Text>
+              <Text style={styles.type}>type {this.state.type}</Text>
               {'\n'}
               <Text style={styles.time}>{sectionTitle}</Text>
             </Text>
@@ -172,7 +171,7 @@ class ProductsCarousel extends React.Component {
 
   componentDidMount() {
     this.track(this.state.selectedIndex);
-    // this.props.dispatch(loadFriendsSchedules());
+    this.props.dispatch(loadFriendsFavorites());
   }
 
   dismiss() {
@@ -219,7 +218,7 @@ var styles = StyleSheet.create({
       textAlign: 'center',
     },
   },
-  productType: {
+  day: {
     ios: {
       fontWeight: 'bold',
     },

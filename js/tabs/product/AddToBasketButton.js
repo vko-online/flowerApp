@@ -36,6 +36,7 @@ var Animated = require('Animated');
 type Props = {
   isAdded: boolean;
   onPress: () => void;
+  addedImageSource?: ?number;
   style?: any;
 };
 
@@ -43,8 +44,8 @@ type State = {
   anim: Animated.Value;
 };
 
-const SAVED_LABEL = 'Добавлено';
-const ADD_LABEL = 'Добавить в корзину';
+const SAVED_LABEL = 'Saved to your basket';
+const ADD_LABEL = 'Add to my basket';
 
 class AddToBasketButton extends React.Component {
   props: Props;
@@ -127,7 +128,7 @@ class AddToBasketButton extends React.Component {
           <View style={{flex: 1}}>
             <View style={styles.content} collapsable={false}>
               <Animated.Image
-                source={require('./img/added.png')}
+                source={this.props.addedImageSource || require('./img/added.png')}
                 style={[styles.icon, addedOpacityImage]}
               />
               <Animated.Text style={[styles.caption, addedOpacity]}>
@@ -192,19 +193,19 @@ var styles = StyleSheet.create({
 });
 
 module.exports = AddToBasketButton;
-// $FlowFixMe
-module.exports.__cards__ = (define) => {
-  let f;
-  setInterval(() => f && f(), 1000);
-
-  define('Inactive', (state = true, update) =>
-    <AddToBasketButton isAdded={state} onPress={() => update(!state)} />);
-
-  define('Active', (state = false, update) =>
-    <AddToBasketButton isAdded={state} onPress={() => update(!state)} />);
-
-  define('Animated', (state = false, update) => {
-    f = () => update(!state);
-    return <AddToBasketButton isAdded={state} onPress={() => {}} />;
-  });
-};
+// // $FlowFixMe
+// module.exports.__cards__ = (define) => {
+//   let f;
+//   setInterval(() => f && f(), 1000);
+//
+//   define('Inactive', (state = true, update) =>
+//     <AddToBasketButton isAdded={state} onPress={() => update(!state)} />);
+//
+//   define('Active', (state = false, update) =>
+//     <AddToBasketButton isAdded={state} onPress={() => update(!state)} />);
+//
+//   define('Animated', (state = false, update) => {
+//     f = () => update(!state);
+//     return <AddToBasketButton isAdded={state} onPress={() => {}} />;
+//   });
+// };
