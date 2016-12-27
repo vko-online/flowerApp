@@ -97,22 +97,25 @@ class MyBasketView extends React.Component {
 
     return [
       <BasketListView
+        key="basket"
         title="Basket"
         products={basketProducts}
         renderEmptyList={this.renderEmptyProductsList}
         navigator={this.props.navigator}
       />,
       <ProductPlainListView
+        key="history"
         title="History"
         products={this.props.purchaseHistory}
         renderEmptyList={this.renderEmptyHistory}
         navigator={this.props.navigator}
       />,
       <FriendsListView
+        key="friends"
         title="Friends"
         friends={this.props.friends}
         navigator={this.props.navigator}
-      />,
+      />
     ];
   }
 

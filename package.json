@@ -24,6 +24,7 @@
     "react": "~15.1.0",
     "react-native": "0.28.0",
     "react-native-code-push": "~1.12.2-beta",
+    "react-native-datepicker": "^1.4.3",
     "react-native-fbsdk": "^0.3.0",
     "react-native-linear-gradient": "~1.5.0",
     "react-native-push-notification": "frantic/react-native-push-notification#7142da7",

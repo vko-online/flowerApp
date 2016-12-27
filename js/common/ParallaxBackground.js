@@ -147,6 +147,8 @@ var styles = StyleSheet.create({
     top: 0,
     right: 0,
     overflow: 'hidden',
+    // justifyContent: 'center',
+    // alignItems: 'center',
   },
   contentContainer: {
     position: 'absolute',

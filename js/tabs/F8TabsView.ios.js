@@ -7,9 +7,7 @@
 
 var F8Colors = require('F8Colors');
 var F8InfoView = require('F8InfoView');
-var F8MapView = require('F8MapView');
 var F8NotificationsView = require('F8NotificationsView');
-var GeneralScheduleView = require('./schedule/GeneralScheduleView');
 var GeneralProductView = require('./product/GeneralProductView');
 var MyBasketView = require('./product/MyBasketView');
 var React = require('React');
@@ -39,31 +37,6 @@ class F8TabsView extends React.Component {
   }
 
   render() {
-    // var scheduleIcon = this.props.day === 1
-    //   ? require('./schedule/img/schedule-icon-1.png')
-    //   : require('./schedule/img/schedule-icon-2.png');
-    // var scheduleIconSelected = this.props.day === 1
-    //   ? require('./schedule/img/schedule-icon-1-active.png')
-    //   : require('./schedule/img/schedule-icon-2-active.png');
-
-    // <TabBarItemIOS
-    //   title="Schedule"
-    //   selected={this.props.tab === 'schedule'}
-    //   onPress={this.onTabSelect.bind(this, 'schedule')}
-    //   icon={scheduleIcon}
-    //   selectedIcon={scheduleIconSelected}>
-    //   <GeneralScheduleView
-    //     navigator={this.props.navigator}
-    //   />
-    // </TabBarItemIOS>
-    // <TabBarItemIOS
-    //   title="Maps"
-    //   selected={this.props.tab === 'map'}
-    //   onPress={this.onTabSelect.bind(this, 'map')}
-    //   icon={require('./maps/img/maps-icon.png')}
-    //   selectedIcon={require('./maps/img/maps-icon-active.png')}>
-    //   <F8MapView />
-    // </TabBarItemIOS>
     return (
       <TabBarIOS tintColor={F8Colors.darkText}>
         <TabBarItemIOS
@@ -80,8 +53,8 @@ class F8TabsView extends React.Component {
           title="Basket"
           selected={this.props.tab === 'basket'}
           onPress={this.onTabSelect.bind(this, 'basket')}
-          icon={require('./schedule/img/my-schedule-icon.png')}
-          selectedIcon={require('./schedule/img/my-schedule-icon-active.png')}>
+          icon={require('./product/img/my-schedule-icon.png')}
+          selectedIcon={require('./product/img/my-schedule-icon-active.png')}>
           <MyBasketView
             navigator={this.props.navigator}
             onJumpToType={() => this.props.onTabSelect('basket')}
@@ -115,7 +88,7 @@ function select(store) {
     tab: store.navigation.tab,
     day: store.navigation.day,
     type: store.navigation.type,
-    notificationsBadge: unseenNotificationsCount(store) + store.surveys.length,
+    notificationsBadge: unseenNotificationsCount(store) + store.surveys.filter(s => !!s.productId).length,
   };
 }
 

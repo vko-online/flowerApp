@@ -8,7 +8,6 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 var Animated = require('Animated');
 var F8Colors = require('F8Colors');
 var F8FriendGoing = require('F8FriendGoingProduct');
-var F8SpeakerProfile = require('F8SpeakerProfile');
 var Image = require('Image');
 import LinearGradient from 'react-native-linear-gradient';
 var MapView = require('../../common/MapView');

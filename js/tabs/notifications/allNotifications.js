@@ -18,7 +18,7 @@ function mergeAndSortByTime(server: Array<Notification>, push: Array<Notificatio
   });
 
   var all = [].concat(server, uniquePush);
-  return all.sort((a, b) => b.time - a.time);
+  return all.sort((a, b) => b.createdAt - a.createdAt);
 }
 
 module.exports = createSelector(

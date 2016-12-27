@@ -9,14 +9,14 @@ var React = require('React');
 var Platform = require('Platform');
 var BackAndroid = require('BackAndroid');
 var F8TabsView = require('F8TabsView');
-var FriendsScheduleView = require('./tabs/schedule/FriendsScheduleView');
 var FilterScreen = require('./filter/FilterScreen');
 var LoginModal = require('./login/LoginModal');
 var Navigator = require('Navigator');
-var SessionsCarousel = require('./tabs/schedule/SessionsCarousel');
 
 var ProductsCarousel = require('./tabs/product/ProductsCarousel');
+var FriendsFavoriteView = require('./tabs/product/FriendsFavoriteView');
 
+var CheckoutScreen = require('./checkout/CheckoutScreen');
 var SharingSettingsModal = require('./tabs/product/SharingSettingsModal');
 var SharingSettingsScreen = require('./tabs/product/SharingSettingsScreen');
 var ThirdPartyNotices = require('./tabs/info/ThirdPartyNotices');
@@ -94,26 +94,10 @@ var F8Navigator = React.createClass({
   },
 
   renderScene: function(route, navigator) {
-    if (route.allSessions) {
-      return (
-        <SessionsCarousel
-          {...route}
-          navigator={navigator}
-        />
-      );
-    }
     if (route.allProducts) {
       return (
         <ProductsCarousel
           {...route}
-          navigator={navigator}
-        />
-      );
-    }
-    if (route.session) {
-      return (
-        <SessionsCarousel
-          session={route.session}
           navigator={navigator}
         />
       );
@@ -133,7 +117,7 @@ var F8Navigator = React.createClass({
     }
     if (route.friend) {
       return (
-        <FriendsScheduleView
+        <FriendsFavoriteView
           friend={route.friend}
           navigator={navigator}
         />
@@ -150,6 +134,16 @@ var F8Navigator = React.createClass({
     if (route.share) {
       return (
         <SharingSettingsModal navigator={navigator} />
+      );
+    }
+    if (route.share) {
+      return (
+        <SharingSettingsModal navigator={navigator} />
+      );
+    }
+    if (route.checkout) {
+      return (
+        <CheckoutScreen navigator={navigator} products={route.products}/>
       );
     }
     if (route.shareSettings) {

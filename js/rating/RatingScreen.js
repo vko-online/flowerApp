@@ -19,11 +19,11 @@ const { connect } = require('react-redux');
 const { submitSurveyAnswers } = require('../actions');
 
 import type {Survey} from '../reducers/surveys';
-import type {Session} from '../reducers/sessions';
+import type {Product} from '../reducers/products';
 import type {Dispatch} from '../actions/types';
 
 type Props = {
-  sessions: Array<Session>;
+  products: Array<Product>;
   surveys: Array<Survey>;
   navigator: any;
   dispatch: Dispatch;
@@ -61,8 +61,8 @@ class RatingScreen extends React.Component {
           <View style={styles.headerContent}>
             <Text style={styles.title}>
               {surveys.length > 1
-                ? 'Review these sessions'
-                : 'Review this session'
+                ? 'Review these products'
+                : 'Review this product'
               }
             </Text>
             <F8PageControl
@@ -83,15 +83,18 @@ class RatingScreen extends React.Component {
 
   renderCard(index: number): ReactElement {
     const survey = this.props.surveys[index];
-    const session = this.props.sessions.find((s) => s.id === survey.sessionId);
-    return (
-      <RatingCard
-        style={styles.card}
-        session={session}
-        questions={survey.questions}
-        onSubmit={(answers) => this.submitAnswers(index, answers)}
-      />
-    );
+    const product = this.props.products.find((s) => s.id === survey.productId);
+    if (product) {
+      return (
+        <RatingCard
+          style={styles.card}
+          product={product}
+          questions={survey.questions}
+          onSubmit={(answers) => this.submitAnswers(index, answers)}
+        />
+      );
+    }
+    return null;
   }
 
   submitAnswers(index: number, answers: Array<number>) {
@@ -157,7 +160,7 @@ var styles = StyleSheet.create({
 
 function select(store) {
   return {
-    sessions: store.sessions,
+    products: store.products,
   };
 }
 

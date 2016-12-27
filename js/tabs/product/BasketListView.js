@@ -6,14 +6,17 @@
 var F8BasketProductCell = require('F8BasketProductCell');
 var Navigator = require('Navigator');
 var React = require('React');
+var View = require('View');
+var StyleSheet = require('StyleSheet');
 var PureListView = require('../../common/PureListView');
+var CheckoutButton = require('./CheckoutButton');
 
-import type {Product} from '../../reducers/products';
+import { Product } from "../../reducers/products";
 
 type Props = {
   products: Array<Product>;
   navigator: Navigator;
-  renderEmptyList?: (type: string) => ReactElement;
+  renderEmptyList?: () => ReactElement;
 };
 
 type State = {
@@ -21,11 +24,11 @@ type State = {
 };
 
 class BasketListView extends React.Component {
-  props: Props;
-  state: State;
-  _innerRef: ?PureListView;
+  props:Props;
+  state:State;
+  _innerRef:?PureListView;
 
-  constructor(props: Props) {
+  constructor(props:Props) {
     super(props);
 
 
@@ -37,11 +40,13 @@ class BasketListView extends React.Component {
 
     (this: any).renderSectionHeader = this.renderSectionHeader.bind(this);
     (this: any).renderRow = this.renderRow.bind(this);
+    (this: any).renderFooter = this.renderFooter.bind(this);
     (this: any).renderEmptyList = this.renderEmptyList.bind(this);
     (this: any).storeInnerRef = this.storeInnerRef.bind(this);
+    (this: any).openCheckoutScreen = this.openCheckoutScreen.bind(this);
   }
 
-  componentWillReceiveProps(nextProps: Props) {
+  componentWillReceiveProps(nextProps:Props) {
     if (nextProps.products !== this.props.products) {
       this.setState({
         todayProducts: nextProps.products
@@ -56,17 +61,28 @@ class BasketListView extends React.Component {
         data={this.state.todayProducts}
         renderRow={this.renderRow}
         renderSectionHeader={this.renderSectionHeader}
+        renderFooter={this.renderFooter}
         {...(this.props: any /* flow can't guarantee the shape of props */)}
         renderEmptyList={this.renderEmptyList}
       />
     );
   }
 
+  renderFooter() {
+    return (
+      <CheckoutButton onPress={() => this.openCheckoutScreen()} style={styles.checkoutBtn}/>
+    );
+  }
+
+  openCheckoutScreen() {
+    this.props.navigator.push({checkout: 1, products: this.props.products});
+  }
+
   renderSectionHeader() {
     return null;
   }
 
-  renderRow(product: Product) {
+  renderRow(product:Product) {
     return (
       <F8BasketProductCell
         product={product}
@@ -74,22 +90,28 @@ class BasketListView extends React.Component {
     );
   }
 
-  renderEmptyList(): ?ReactElement {
+  renderEmptyList():?ReactElement {
     const {renderEmptyList} = this.props;
-    return renderEmptyList && renderEmptyList(this.props.day);
+    return renderEmptyList && renderEmptyList();
   }
 
-  storeInnerRef(ref: ?PureListView) {
+  storeInnerRef(ref:?PureListView) {
     this._innerRef = ref;
   }
 
-  scrollTo(...args: Array<any>) {
+  scrollTo(...args:Array<any>) {
     this._innerRef && this._innerRef.scrollTo(...args);
   }
 
-  getScrollResponder(): any {
+  getScrollResponder():any {
     return this._innerRef && this._innerRef.getScrollResponder();
   }
 }
+
+var styles = StyleSheet.create({
+  checkoutBtn: {
+    marginTop: 10
+  },
+});
 
 module.exports = BasketListView;

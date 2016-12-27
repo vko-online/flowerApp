@@ -23,6 +23,7 @@ type Props = {
   renderEmptyList?: ?RenderElement;
   minContentHeight: number;
   contentInset: { top: number; bottom: number; };
+  renderFooter?: RenderElement
 };
 
 type State = {

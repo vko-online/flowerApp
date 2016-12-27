@@ -16,10 +16,7 @@ var View = require('View');
 var StatusBar = require('StatusBar');
 var {
   loadConfig,
-  loadMaps,
   loadNotifications,
-  loadSessions,
-  loadFriendsSchedules,
   loadSurveys,
   loadProducts
 } = require('./actions');
@@ -34,10 +31,7 @@ var F8App = React.createClass({
 
     // TODO: Make this list smaller, we basically download the whole internet
     this.props.dispatch(loadNotifications());
-    this.props.dispatch(loadMaps());
     this.props.dispatch(loadConfig());
-    this.props.dispatch(loadSessions());
-    this.props.dispatch(loadFriendsSchedules());
     this.props.dispatch(loadSurveys());
     this.props.dispatch(loadProducts());
 
@@ -51,7 +45,6 @@ var F8App = React.createClass({
 
   handleAppStateChange: function(appState) {
     if (appState === 'active') {
-      this.props.dispatch(loadSessions());
       this.props.dispatch(loadNotifications());
       this.props.dispatch(loadSurveys());
       this.props.dispatch(loadProducts());

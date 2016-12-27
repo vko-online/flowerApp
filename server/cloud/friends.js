@@ -50,25 +50,6 @@ Parse.Cloud.define('friends', function(request, response) {
   );
 });
 
-function fetchSchedule(user) {
-  if (!user.get('sharedSchedule')) {
-    return Parse.Promise.as(null);
-  }
-  // https://www.parse.com/questions/can-i-use-include-in-a-query-to-include-all-members-of-a-parserelation-error-102
-  return user.relation('mySchedule').query().find().then(
-    function(sessions) {
-      var schedule = {};
-      sessions.forEach(function(session) {
-        schedule[session.id] = true;
-      });
-      return {
-        id: user.get('facebook_id'),
-        name: user.get('name'),
-        schedule: schedule,
-      };
-    }
-  );
-}
 
 function fetchFavorites(user) {
   if (!user.get('sharedProduct')) {

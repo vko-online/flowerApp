@@ -18,6 +18,7 @@ const basketActions = require('./basket');
 const productActions = require('./product');
 const favoriteActions = require('./favorites');
 const historyActions = require('./history');
+const orderActions = require('./order');
 
 module.exports = {
   ...loginActions,
@@ -33,5 +34,6 @@ module.exports = {
   ...basketActions,
   ...productActions,
   ...favoriteActions,
-  ...historyActions
+  ...historyActions,
+  ...orderActions
 };

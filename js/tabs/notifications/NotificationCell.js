@@ -4,7 +4,7 @@
 'use strict';
 
 var F8Colors = require('F8Colors');
-var F8SessionCell = require('F8SessionCell');
+var F8ProductCell = require('F8ProductCell');
 var React = require('React');
 var StyleSheet = require('StyleSheet');
 var findProductByURI = require('findProductByURI');
@@ -23,7 +23,6 @@ class NotificationCell extends React.Component {
         <F8ProductCell
           style={styles.product}
           product={this.props.product}
-          showStartEndTime={true}
         />
       );
     } else if (this.props.notification.url) {
@@ -93,7 +92,7 @@ var styles = StyleSheet.create({
 
 function select(store, props) {
   return {
-    product: findProductByURI(store.sessions, props.notification.url),
+    product: findProductByURI(store.products, props.notification.url),
     isSeen: store.notifications.seen[props.notification.id],
   };
 }

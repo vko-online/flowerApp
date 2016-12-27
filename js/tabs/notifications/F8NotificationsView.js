@@ -4,7 +4,7 @@
  */
 'use strict';
 
-var EmptySchedule = require('../schedule/EmptySchedule');
+var EmptyProduct = require('../product/EmptyProduct');
 var Linking = require('Linking');
 var PushNUXModal = require('./PushNUXModal');
 var PureListView = require('../../common/PureListView');
@@ -100,7 +100,7 @@ class F8NotificationsView extends React.Component {
 
   renderEmptyList() {
     return (
-      <EmptySchedule
+      <EmptyProduct
         title="No Notifications Yet"
         text="Important updates and announcements will appear here"
       />
@@ -121,7 +121,7 @@ class F8NotificationsView extends React.Component {
   openReview() {
     this.props.navigator.push({
       rate: 1,
-      surveys: this.props.surveys,
+      surveys: this.props.surveys
     });
   }
 
