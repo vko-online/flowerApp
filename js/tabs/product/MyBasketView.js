@@ -54,7 +54,7 @@ var { createSelector } = require('reselect');
 type Props = {
   user: User;
   products: Array<Product>;
-  basket: Array<Product>;
+  basket: {[key:string]: boolean};
   purchaseHistory: Array<Product>;
   friends: Array<FriendsFavorites>;
   favorites: {[key:string]: boolean}[];
@@ -113,10 +113,12 @@ class MyBasketView extends React.Component {
       );
     }
 
+    var basketProducts = this.props.products.filter(prod => !!this.props.basket[prod.id]);
+
     return [
       <BasketListView
         title="Basket"
-        products={this.props.basket}
+        products={basketProducts}
         renderEmptyList={this.renderEmptyProductsList}
         navigator={this.props.navigator}
       />,

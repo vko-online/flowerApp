@@ -19,25 +19,25 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE
  *
- * @providesModule findSessionByURI
+ * @providesModule findProductByURI
  * @flow
  */
 'use strict';
 
-import type { Session } from '../../reducers/sessions';
+import type { Product } from '../../reducers/products';
 
-function findSessionByURI(sessions: Array<Session>, uri: ?string): ?Session {
+function findProductByURI(products: Array<Product>, uri: ?string): ?Product {
   if (!uri) {
     return null;
   }
   var slug = uri.replace('f8://', '');
-  for (var i = 0; i < sessions.length; i++) {
-    var session = sessions[i];
-    if (session.slug === slug || session.id === slug) {
-      return session;
+  for (var i = 0; i < products.length; i++) {
+    var product = products[i];
+    if (product.slug === slug || product.id === slug) {
+      return product;
     }
   }
   return null;
 }
 
-module.exports = findSessionByURI;
+module.exports = findProductByURI;

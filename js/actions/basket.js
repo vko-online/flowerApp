@@ -34,28 +34,28 @@ const ProductClass = Parse.Object.extend('Product');
 import { ThunkAction, PromiseAction, Dispatch } from "./types";
 import { Product } from "../reducers/products";
 
-function addToBasket(product:Product):ThunkAction {
+function addToBasket(id:string):ThunkAction {
   return (dispatch:Dispatch) => {
     if (Parse.User.current()) {
-      Parse.User.current().relation('myBasket').add(new ProductClass({id: product.id}));
+      Parse.User.current().relation('myBasket').add(new ProductClass({id}));
       Parse.User.current().save();
     }
     dispatch({
       type: 'PRODUCT_ADDED',
-      product,
+      id,
     });
   };
 }
 
-function removeFromBasket(product:Product):ThunkAction {
+function removeFromBasket(id:string):ThunkAction {
   return (dispatch:Dispatch) => {
     if (Parse.User.current()) {
-      Parse.User.current().relation('myBasket').remove(new ProductClass({id: product.id}));
+      Parse.User.current().relation('myBasket').remove(new ProductClass({id}));
       Parse.User.current().save();
     }
     dispatch({
       type: 'PRODUCT_REMOVED',
-      product,
+      id,
     });
   };
 }
@@ -69,7 +69,7 @@ function removeFromBasketWithPrompt(product:Product):ThunkAction {
         cancelButtonIndex: 1,
       }, (buttonIndex) => {
         if (buttonIndex === 0) {
-          dispatch(removeFromBasket(product));
+          dispatch(removeFromBasket(product.id));
         }
       });
     } else {
@@ -80,7 +80,7 @@ function removeFromBasketWithPrompt(product:Product):ThunkAction {
           {text: 'Cancel'},
           {
             text: 'Remove',
-            onPress: () => dispatch(removeFromBasket(product))
+            onPress: () => dispatch(removeFromBasket(product.id))
           }
         ]
       );

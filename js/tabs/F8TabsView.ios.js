@@ -76,6 +76,14 @@ class F8TabsView extends React.Component {
     //     navigator={this.props.navigator}
     //   />
     // </TabBarItemIOS>
+    // <TabBarItemIOS
+    //   title="Maps"
+    //   selected={this.props.tab === 'map'}
+    //   onPress={this.onTabSelect.bind(this, 'map')}
+    //   icon={require('./maps/img/maps-icon.png')}
+    //   selectedIcon={require('./maps/img/maps-icon-active.png')}>
+    //   <F8MapView />
+    // </TabBarItemIOS>
     return (
       <TabBarIOS tintColor={F8Colors.darkText}>
         <TabBarItemIOS
@@ -98,14 +106,6 @@ class F8TabsView extends React.Component {
             navigator={this.props.navigator}
             onJumpToType={() => this.props.onTabSelect('basket')}
           />
-        </TabBarItemIOS>
-        <TabBarItemIOS
-          title="Maps"
-          selected={this.props.tab === 'map'}
-          onPress={this.onTabSelect.bind(this, 'map')}
-          icon={require('./maps/img/maps-icon.png')}
-          selectedIcon={require('./maps/img/maps-icon-active.png')}>
-          <F8MapView />
         </TabBarItemIOS>
         <TabBarItemIOS
           title="Notifications"

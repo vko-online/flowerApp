@@ -55,19 +55,18 @@ function F8InfoView() {
     </ListContainer>
   );
 }
-
+// <WiFiDetails
+//   network={config.wifiNetwork}
+//   password={config.wifiPassword}
+// />
+//          <LinksList title="Facebook pages" links={pages} />
 function InfoList({viewer: {config, faqs, pages}, ...props}) {
   return (
     <PureListView
       renderEmptyList={() => (
         <View>
-          <WiFiDetails
-            network={config.wifiNetwork}
-            password={config.wifiPassword}
-          />
           <CommonQuestions faqs={faqs} />
-          <LinksList title="Facebook pages" links={pages} />
-          <LinksList title="Facebook policies" links={POLICIES_LINKS} />
+          <LinksList title="Policies" links={POLICIES_LINKS} />
         </View>
       )}
       {...(props: any /* flow can't guarantee the shape of props */)}

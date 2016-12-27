@@ -33,10 +33,10 @@ var Platform = require('Platform');
 var ActionSheetIOS = require('ActionSheetIOS');
 var ListContainer = require('ListContainer');
 var NotificationCell = require('./NotificationCell');
-var RateSessionsCell = require('./RateSessionsCell');
+var RateProductsCell = require('./RateProductsCell');
 var allNotifications = require('./allNotifications');
 var View = require('View');
-var findSessionByURI = require('findSessionByURI');
+var findProductByURI = require('findProductByURI');
 var { connect } = require('react-redux');
 var {
   turnOnPushNotifications,
@@ -103,8 +103,8 @@ class F8NotificationsView extends React.Component {
   renderRow(notification) {
     if (notification.surveysCount) {
       return (
-        <RateSessionsCell
-          numberOfSessions={notification.surveysCount}
+        <RateProductsCell
+          numberOfProducts={notification.surveysCount}
           onPress={this.openReview}
         />
       );
@@ -129,9 +129,9 @@ class F8NotificationsView extends React.Component {
 
   openNotification(notification) {
     if (notification.url) {
-      var session = findSessionByURI(this.props.sessions, notification.url);
-      if (session) {
-        this.props.navigator.push({session});
+      var product = findProductByURI(this.props.products, notification.url);
+      if (product) {
+        this.props.navigator.push({product});
       } else {
         Linking.openURL(notification.url);
       }
@@ -191,7 +191,7 @@ function select(state) {
   return {
     nux: state.notifications.enabled === null,
     notifications: data(state),
-    sessions: state.sessions,
+    products: state.products,
     surveys: state.surveys,
   };
 }
