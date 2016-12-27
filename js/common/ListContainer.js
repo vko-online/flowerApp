@@ -1,4 +1,3 @@
-
 /**
  * Copyright 2016 Facebook, Inc.
  *
@@ -35,14 +34,15 @@ var React = require('React');
 var ReactNative = require('react-native');
 var StyleSheet = require('F8StyleSheet');
 var View = require('View');
-var { Text } = require('F8Text');
+var {Text} = require('F8Text');
 var ViewPager = require('./ViewPager');
 var Platform = require('Platform');
 
-import type {Item as HeaderItem} from 'F8Header';
+import { Item as HeaderItem } from "F8Header";
 
 type Props = {
   title: string;
+  subTitle?: string;
   leftItem?: HeaderItem;
   rightItem?: HeaderItem;
   extraItems?: Array<HeaderItem>;
@@ -52,7 +52,7 @@ type Props = {
   backgroundColor: string;
   parallaxContent?: ?ReactElement;
   stickyHeader?: ?ReactElement;
-  onSegmentChange?: (segment: number) => void;
+  onSegmentChange?: (segment:number) => void;
   children?: any;
 };
 
@@ -73,8 +73,9 @@ const ActivityIndicator = Platform.OS === 'ios'
 var Relay = require('react-relay');
 var RelayRenderer = require('react-relay/lib/RelayRenderer.js');
 
-class MainRoute extends Relay.Route {}
-MainRoute.queries = { viewer: () => Relay.QL`query { viewer }` };
+class MainRoute extends Relay.Route {
+}
+MainRoute.queries = {viewer: () => Relay.QL`query { viewer }`};
 MainRoute.routeName = 'MainRoute';
 
 class RelayLoading extends React.Component {
@@ -109,10 +110,10 @@ class RelayLoading extends React.Component {
 }
 
 class ListContainer extends React.Component {
-  props: Props;
-  state: State;
-  _refs: Array<any>;
-  _pinned: any;
+  props:Props;
+  state:State;
+  _refs:Array<any>;
+  _pinned:any;
 
   static defaultProps = {
     selectedSectionColor: 'white',
@@ -123,7 +124,7 @@ class ListContainer extends React.Component {
     hasUnreadNotifications: React.PropTypes.number,
   };
 
-  constructor(props: Props) {
+  constructor(props:Props) {
     super(props);
 
     this.state = {
@@ -155,7 +156,9 @@ class ListContainer extends React.Component {
     const content = React.Children.map(this.props.children, (child, idx) => {
       segments.push(child.props.title);
       return <RelayLoading>{React.cloneElement(child, {
-        ref: (ref) => { this._refs[idx] = ref; },
+        ref: (ref) => {
+          this._refs[idx] = ref;
+        },
         onScroll: (e) => this.handleScroll(idx, e),
         style: styles.listView,
         showsVerticalScrollIndicator: false,
@@ -226,13 +229,24 @@ class ListContainer extends React.Component {
       return this.props.parallaxContent;
     }
     return (
-      <Text style={styles.parallaxText}>
-        {this.props.title}
-      </Text>
+      <View style={styles.parallaxWrapper}>
+        <Text style={styles.parallaxText}>
+          {this.props.title}
+        </Text>
+        {
+          this.props.subTitle ? (
+            <View style={styles.parallaxSubTextWrapper}>
+              <Text style={styles.parallaxSubText}>
+                {this.props.subTitle}
+              </Text>
+            </View>
+          ) : null
+        }
+      </View>
     );
   }
 
-  renderHeaderTitle(): ?ReactElement {
+  renderHeaderTitle():?ReactElement {
     if (Platform.OS === 'android') {
       return null;
     }
@@ -254,7 +268,7 @@ class ListContainer extends React.Component {
     );
   }
 
-  handleScroll(idx: number, e: any) {
+  handleScroll(idx:number, e:any) {
     if (idx !== this.state.idx) {
       return;
     }
@@ -276,18 +290,18 @@ class ListContainer extends React.Component {
     if (Platform.OS === 'ios') {
       const height = EMPTY_CELL_HEIGHT - this.state.stickyHeaderHeight;
       return (
-        <View style={{height}} />
+        <View style={{height}}/>
       );
     }
   }
 
-  renderFixedStickyHeader(stickyHeader: ?ReactElement) {
+  renderFixedStickyHeader(stickyHeader:?ReactElement) {
     return Platform.OS === 'ios'
-      ? <View style={{height: this.state.stickyHeaderHeight}} />
+      ? <View style={{height: this.state.stickyHeaderHeight}}/>
       : stickyHeader;
   }
 
-  renderFloatingStickyHeader(stickyHeader: ?ReactElement) {
+  renderFloatingStickyHeader(stickyHeader:?ReactElement) {
     if (!stickyHeader || Platform.OS !== 'ios') {
       return;
     }
@@ -315,24 +329,24 @@ class ListContainer extends React.Component {
     );
   }
 
-  handleStickyHeaderLayout({nativeEvent: { layout, target }}: any) {
+  handleStickyHeaderLayout({nativeEvent: {layout, target}}: any) {
     this.setState({stickyHeaderHeight: layout.height});
   }
 
-  componentWillReceiveProps(nextProps: Props) {
+  componentWillReceiveProps(nextProps:Props) {
     if (typeof nextProps.selectedSegment === 'number' &&
-        nextProps.selectedSegment !== this.state.idx) {
+      nextProps.selectedSegment !== this.state.idx) {
       this.setState({idx: nextProps.selectedSegment});
     }
   }
 
-  componentDidUpdate(prevProps: Props, prevState: State) {
+  componentDidUpdate(prevProps:Props, prevState:State) {
     if (!NativeModules.F8Scrolling) {
       return;
     }
 
     if (this.state.idx !== prevState.idx ||
-        this.state.stickyHeaderHeight !== prevState.stickyHeaderHeight) {
+      this.state.stickyHeaderHeight !== prevState.stickyHeaderHeight) {
       var distance = EMPTY_CELL_HEIGHT - this.state.stickyHeaderHeight;
 
       if (this._refs[prevState.idx] && this._refs[prevState.idx].getScrollResponder) {
@@ -352,7 +366,7 @@ class ListContainer extends React.Component {
     }
   }
 
-  handleSelectSegment(idx: number) {
+  handleSelectSegment(idx:number) {
     if (this.state.idx !== idx) {
       const {onSegmentChange} = this.props;
       this.setState({idx}, () => onSegmentChange && onSegmentChange(idx));
@@ -392,10 +406,22 @@ var styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 20,
   },
+  parallaxWrapper: {
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
   parallaxText: {
     color: 'white',
     fontSize: 42,
     fontWeight: 'bold',
+    letterSpacing: -1,
+  },
+  parallaxSubTextWrapper: {
+    width: Dimensions.get('window').width - 100
+  },
+  parallaxSubText: {
+    color: 'white',
+    fontSize: 14,
     letterSpacing: -1,
   },
   stickyHeader: {

@@ -35,11 +35,14 @@ function byTopics(products: Array<Product>, topics: StringMap): Array<Product> {
   if (Object.keys(topics).length === 0) {
     return products;
   }
+  console.log('products', products);
   return products.filter((product) => {
     var hasMatchingTag = false;
-    product.tags.forEach((tag) => {
-      hasMatchingTag = hasMatchingTag || topics[tag];
-    });
+    if (product.tags && product.tags.length) {
+      product.tags.forEach((tag) => {
+        hasMatchingTag = hasMatchingTag || topics[tag];
+      });
+    }
     return hasMatchingTag;
   });
 }

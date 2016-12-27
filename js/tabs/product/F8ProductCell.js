@@ -41,15 +41,18 @@ class F8ProductCell extends React.Component {
   props: {
     product: Product;
     showTick: boolean;
-    showTickForce: boolean;
+    hideTickForce?: boolean;
     onPress: ?() => void;
     style: any;
   };
 
   render() {
+    console.log('this.props.showTick', this.props.showTick);
+    console.log('this.props.hideTickForce', this.props.hideTickForce);
     var product = this.props.product;
     var tick;
-    if (this.props.showTick && this.props.showTickForce) {
+    if (this.props.showTick && !this.props.hideTickForce) {
+      console.log('called');
       tick =
         <Image style={styles.added} source={require('./img/added-cell.png')} />;
     }
@@ -122,6 +125,7 @@ var styles = StyleSheet.create({
 });
 
 function select(store, props) {
+  console.log('store.favorites', store.favorites);
   return {
     showTick: !!store.favorites[props.product.id],
   };

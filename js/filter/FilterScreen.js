@@ -195,7 +195,7 @@ var styles = StyleSheet.create({
 function select(store) {
   return {
     isLoggedIn: store.user.isLoggedIn,
-    friendsSchedules: store.friendsSchedules,
+    friendsFavorites: store.friendsFavorites,
     topics: store.topics,
     selectedTopics: store.filter,
   };

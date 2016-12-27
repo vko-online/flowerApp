@@ -90,8 +90,8 @@ class F8TabsView extends React.Component {
           title="Products"
           selected={this.props.tab === 'product'}
           onPress={this.onTabSelect.bind(this, 'product')}
-          icon={require('./product/img/settings.png')}
-          selectedIcon={require('./product/img/settings.png')}>
+          icon={require('./product/img/schedule-icon-1.png')}
+          selectedIcon={require('./product/img/schedule-icon-1-active.png')}>
           <GeneralProductView
             navigator={this.props.navigator}
           />

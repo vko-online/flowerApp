@@ -89,7 +89,7 @@ class ProductListView extends React.Component {
   renderRow(product: Product) {
     return (
       <F8ProductCell
-        showTickForce={false}
+        hideTickForce={true}
         product={product}
       />
     );

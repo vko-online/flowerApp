@@ -83,7 +83,8 @@ class GeneralProductView extends React.Component {
 
     const content = (
       <ListContainer
-        title="Gifts"
+        title="Gifty"
+        subTitle="Приложение для покупки/раздариванию подарков. A falsis, hibrida fortis nix. Rise and you will be forgotten purely."
         selectedSegment={this.props.type}
         onSegmentChange={this.switchType}
         backgroundImage={require('./img/schedule-background.png')}
@@ -126,10 +127,10 @@ class GeneralProductView extends React.Component {
     return <FilterScreen onClose={() => this._drawer && this._drawer.closeDrawer()} />;
   }
 
-  renderEmptyList(day: number) {
+  renderEmptyList(type: string) {
     return (
       <EmptyProduct
-        title={`No products for type ${day} that match the filter`}
+        title={`No products for type ${type} that match the filter`}
         text="Check the products for the other types or remove the filter."
       />
     );

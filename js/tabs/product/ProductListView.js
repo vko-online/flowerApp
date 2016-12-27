@@ -53,7 +53,6 @@ class ProductListView extends React.Component {
   constructor(props: Props) {
     super(props);
 
-
     this.state = {
       todayProducts: groupProducts(FilterProducts.byType(props.products, props.type)),
     };
@@ -96,6 +95,7 @@ class ProductListView extends React.Component {
     return (
       <F8ProductCell
         onPress={() => this.openProduct(product, type)}
+        hideTickForce={false}
         product={product}
       />
     );
@@ -103,7 +103,7 @@ class ProductListView extends React.Component {
 
   renderEmptyList(): ?ReactElement {
     const {renderEmptyList} = this.props;
-    return renderEmptyList && renderEmptyList(this.props.day);
+    return renderEmptyList && renderEmptyList(this.props.type);
   }
 
   openProduct(product: Product, type: string) {

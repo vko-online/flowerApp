@@ -37,8 +37,8 @@ var SessionsCarousel = require('./tabs/schedule/SessionsCarousel');
 
 var ProductsCarousel = require('./tabs/product/ProductsCarousel');
 
-var SharingSettingsModal = require('./tabs/schedule/SharingSettingsModal');
-var SharingSettingsScreen = require('./tabs/schedule/SharingSettingsScreen');
+var SharingSettingsModal = require('./tabs/product/SharingSettingsModal');
+var SharingSettingsScreen = require('./tabs/product/SharingSettingsScreen');
 var ThirdPartyNotices = require('./tabs/info/ThirdPartyNotices');
 var RatingScreen = require('./rating/RatingScreen');
 var StyleSheet = require('StyleSheet');
